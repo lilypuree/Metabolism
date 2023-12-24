@@ -1,0 +1,16 @@
+{
+  "conditions": [
+    {
+      "condition": "minecraft:location_check",
+      "predicate": {
+        "dimension": "minecraft:overworld",
+        "position": {
+          "y": {
+            "min" : 150
+          }
+        }
+      }
+    }
+  ],
+  "heat_target": -12.0
+}

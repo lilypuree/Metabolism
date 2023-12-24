@@ -1,0 +1,10 @@
+{
+  "conditions": [
+    {
+      "condition": "metabolism:advanced_weather_check",
+      "weather_type": "snow"
+    }
+  ],
+  "is_additive": true,
+  "heat_target": -8.0
+}

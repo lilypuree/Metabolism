@@ -1,0 +1,21 @@
+{
+  "conditions": {
+    "condition": "minecraft:entity_properties",
+    "entity": "this",
+    "predicate": {
+      "equipment": {
+        "head": {
+          "items": [
+            "minecraft:leather_chestplate",
+            "minecraft:leather_leggings",
+            "minecraft:leather_boots",
+            "minecraft:leather_helmet"
+          ]
+        }
+      }
+    }
+  },
+  "is_resistance": true,
+  "is_additive": true,
+  "heat_target": 3.0
+}

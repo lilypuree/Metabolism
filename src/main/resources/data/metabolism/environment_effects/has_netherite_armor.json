@@ -1,0 +1,21 @@
+{
+  "conditions": {
+    "condition": "minecraft:entity_properties",
+    "entity": "this",
+    "predicate": {
+      "equipment": {
+        "head": {
+          "items": [
+            "minecraft:netherite_chestplate",
+            "minecraft:netherite_leggings",
+            "minecraft:netherite_boots",
+            "minecraft:netherite_helmet"
+          ]
+        }
+      }
+    }
+  },
+  "is_resistance": true,
+  "is_additive": true,
+  "heat_target": -6.0
+}

@@ -1,0 +1,10 @@
+{
+  "conditions": [
+    {
+      "condition": "metabolism:advanced_weather_check",
+      "weather_type": "sunny"
+    }
+  ],
+  "is_additive": true,
+  "warmth_effect": 1.0
+}

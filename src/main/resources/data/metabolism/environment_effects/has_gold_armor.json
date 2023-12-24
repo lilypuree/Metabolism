@@ -1,0 +1,21 @@
+{
+  "conditions": {
+    "condition": "minecraft:entity_properties",
+    "entity": "this",
+    "predicate": {
+      "equipment": {
+        "head": {
+          "items": [
+            "minecraft:gold_chestplate",
+            "minecraft:gold_leggings",
+            "minecraft:gold_boots",
+            "minecraft:gold_helmet"
+          ]
+        }
+      }
+    }
+  },
+  "is_resistance": true,
+  "is_additive": true,
+  "heat_target": -3.0
+}
