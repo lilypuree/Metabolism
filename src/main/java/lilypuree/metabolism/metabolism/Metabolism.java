@@ -110,7 +110,7 @@ public class Metabolism {
     }
 
     private void applyHeatTarget(float heatTarget) {
-        if (Math.abs(heat - heatTarget) < 1E-3) {
+        if (Math.abs(heat - heatTarget) < 1E-2) {
             heat = heatTarget;
         } else if (heat > 0) {
             //HOT
@@ -155,7 +155,7 @@ public class Metabolism {
     }
 
     public void eat(float foodLevel, float saturationLevelModifier) {
-        this.food += foodLevel;
+        this.food += foodLevel * MetabolismConstants.OTHER_FOOD_MULTIPLIER;
     }
 
     public void peacefulWarmth() {

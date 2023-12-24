@@ -6,12 +6,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import lilypuree.metabolism.client.ClientMetabolites;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
@@ -53,7 +53,7 @@ public class Metabolites extends SimpleJsonResourceReloadListener {
         ImmutableMap.Builder<Item, Metabolite> builder = ImmutableMap.builder();
         map.forEach((location, value) -> {
             Item item = ForgeRegistries.ITEMS.getValue(location);
-            if (item != null) {
+            if (item != Items.AIR) {
                 Metabolite metabolite = Metabolite.CODEC.parse(JsonOps.INSTANCE, value)
                         .getOrThrow(false, prefix("Metabolite for " + location + ": "));
                 builder.put(item, metabolite);

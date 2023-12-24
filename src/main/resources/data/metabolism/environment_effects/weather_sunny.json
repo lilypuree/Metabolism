@@ -6,5 +6,5 @@
     }
   ],
   "is_additive": true,
-  "warmth_effect": 1.0
+  "warmth_effect": 0.1
 }

@@ -23,4 +23,5 @@ public class MetabolismConstants {
     public static final float ENERGY_SPRINT = 0.1F; //about 3 minutes sprinting = 100 energy
     public static final float ENERGY_FLY = 0.03F; //about 1 minutes of flying down = 100 energy
     public static final float EXHAUSTION_MULTIPLIER = 1.0F; //about 1 minute of gliding = 
+    public static final float OTHER_FOOD_MULTIPLIER = 0.5F;
 }
