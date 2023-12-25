@@ -1,6 +1,7 @@
 package lilypuree.metabolism;
 
 import com.mojang.logging.LogUtils;
+import lilypuree.metabolism.compat.AppleSkinEventHandler;
 import lilypuree.metabolism.data.Environment;
 import lilypuree.metabolism.config.Config;
 import lilypuree.metabolism.data.Metabolites;
@@ -12,9 +13,11 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkDirection;
 import org.slf4j.Logger;
@@ -34,8 +37,15 @@ public class MetabolismMod {
         Network.init();
 
         modbus.addListener(this::reloadConfig);
+        modbus.addListener(this::clientInit);
         forgebus.addListener(this::addListener);
         forgebus.addListener(this::syncMetabolites);
+    }
+
+    private void clientInit(final FMLClientSetupEvent event) {
+        if (ModList.get().isLoaded("appleskin")) {
+            MinecraftForge.EVENT_BUS.register(new AppleSkinEventHandler());
+        }
     }
 
     private void reloadConfig(ModConfigEvent.Reloading event) {

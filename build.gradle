@@ -70,6 +70,8 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven { url "https://maven.ryanliptak.com/" }
+
     maven {
         name = 'Sponge / Mixin'
         url = 'https://repo.spongepowered.org/repository/maven-public/'
@@ -79,7 +81,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-
+    compileOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}:api")
 }
 
 mixin{
