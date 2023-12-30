@@ -8,15 +8,13 @@ import squeek.appleskin.api.event.TooltipOverlayEvent;
 public class AppleSkinEventHandler {
     @SubscribeEvent
     public void onPreTooltipEvent(TooltipOverlayEvent.Pre event) {
-        if (Metabolites.getMetabolites().containsKey(event.itemStack.getItem())) {
-            event.setCanceled(true);
-        }
+        event.setCanceled(true);
     }
 
     @SubscribeEvent
     public void onHudOverlayEvent(HUDOverlayEvent event) {
         event.setCanceled(true);
     }
-    
-    
+
+
 }

@@ -18,7 +18,7 @@ public class Network {
         channel.messageBuilder(MetabolitesPacket.class, id++)
                 .decoder(MetabolitesPacket::decode)
                 .encoder(MetabolitesPacket::encode)
-                .consumerMainThread(MetabolitesPacket::handle) 
+                .consumerMainThread(MetabolitesPacket::handle)
                 .add();
 
         channel.messageBuilder(ClientSyncMessage.class, id++)
@@ -27,5 +27,14 @@ public class Network {
                 .consumerMainThread(ClientHandler::handleSyncMessage)
                 .add();
 
+
+        channel.messageBuilder(ProgressSyncMessage.class, id++)
+                .decoder(ProgressSyncMessage::fromBytes)
+                .encoder(ProgressSyncMessage::toBytes)
+                .consumerMainThread(ClientHandler::handleSyncProgress)
+                .add();
+
     }
+
+
 }

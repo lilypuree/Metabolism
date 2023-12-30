@@ -15,7 +15,7 @@ public enum Anchor {
     private final Horizontal horizontal;
     private final Vertical vertical;
 
-    private Anchor(Horizontal horizontal, Vertical vertical) {
+    Anchor(Horizontal horizontal, Vertical vertical) {
         this.horizontal = horizontal;
         this.vertical = vertical;
     }
@@ -36,7 +36,7 @@ public enum Anchor {
         return this.vertical;
     }
 
-    public static enum Vertical {
+    public enum Vertical {
         TOP {
             public int getY(int scaledScreenHeight, int elementHeight, int margin) {
                 return margin;
@@ -53,13 +53,13 @@ public enum Anchor {
             }
         };
 
-        private Vertical() {
+        Vertical() {
         }
 
         public abstract int getY(int var1, int var2, int var3);
     }
 
-    public static enum Horizontal {
+    public enum Horizontal {
         LEFT {
             public int getX(int scaledScreenWidth, int elementWidth, int margin) {
                 return margin;
@@ -76,7 +76,7 @@ public enum Anchor {
             }
         };
 
-        private Horizontal() {
+        Horizontal() {
         }
 
         public abstract int getX(int var1, int var2, int var3);

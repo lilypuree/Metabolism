@@ -1,5 +1,5 @@
 {
-  "warmth": 1.0,
+  "warmth": 0.8,
   "food": 2.0,
-  "energy": 0.0
+  "hydration": 1.0
 }

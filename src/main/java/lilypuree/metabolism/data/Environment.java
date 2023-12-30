@@ -31,7 +31,7 @@ public class Environment extends SimpleJsonResourceReloadListener {
     private static Environment currentInstance = null;
     private static Environment reloadingInstance = null;
     private static final Gson GSON = LootDataType.PREDICATE.parser();
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger("Environment Effects");
     public static final String FOLDER = "environment_effects";
     private ImmutableSet<EnvironmentEffect> localEffects;
     private ImmutableSet<EnvironmentEffect> rangedEffects;

@@ -1,5 +1,6 @@
 {
-  "warmth": 6.0,
+  "warmth": 5.0,
+  "amplifier": 1,
   "food": 4.0,
-  "energy": 20.0
+  "hydration": 7.0
 }

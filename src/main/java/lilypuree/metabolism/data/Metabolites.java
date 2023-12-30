@@ -10,7 +10,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -27,7 +30,7 @@ public class Metabolites extends SimpleJsonResourceReloadListener {
     public static final Logger LOGGER = LogManager.getLogger("Metabolites");
     public static final String FOLDER = "metabolites";
 
-    private  ImmutableMap<Item, Metabolite> metaboliteMap;
+    private ImmutableMap<Item, Metabolite> metaboliteMap;
 
     public Metabolites() {
         super(GSON, FOLDER);
@@ -36,6 +39,19 @@ public class Metabolites extends SimpleJsonResourceReloadListener {
         else
             reloadingInstance = this;
     }
+
+    public static Metabolite getMetabolite(ItemStack item, LivingEntity entity) {
+        var map = getMetabolites();
+        if (map.containsKey(item.getItem())) {
+            return map.get(item.getItem());
+        } else {
+            FoodProperties properties = item.getFoodProperties(entity);
+            if (properties != null)
+                return Metabolite.createVanilla(properties.getNutrition(), properties.getSaturationModifier());
+            else return Metabolite.NONE;
+        }
+    }
+
     public static Map<Item, Metabolite> getMetabolites() {
         return DistExecutor.unsafeRunForDist(
                 () -> ClientMetabolites::getClientMetabolites,
@@ -48,6 +64,7 @@ public class Metabolites extends SimpleJsonResourceReloadListener {
             throw new RuntimeException("Tried to access Metabolites too early!");
         return currentInstance.metaboliteMap;
     }
+
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler) {
         ImmutableMap.Builder<Item, Metabolite> builder = ImmutableMap.builder();

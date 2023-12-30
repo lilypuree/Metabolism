@@ -4,6 +4,7 @@ package lilypuree.metabolism.client;
 import lilypuree.metabolism.metabolism.Metabolism;
 import lilypuree.metabolism.metabolism.FoodDataDuck;
 import lilypuree.metabolism.network.ClientSyncMessage;
+import lilypuree.metabolism.network.ProgressSyncMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -20,6 +21,11 @@ public class ClientHandler {
     public static void handleSyncMessage(ClientSyncMessage msg, Supplier<NetworkEvent.Context> ctx) {
         Metabolism metabolism = getClientMetabolism(Minecraft.getInstance());
         metabolism.syncOnClient(msg);
+    }
+
+    public static void handleSyncProgress(ProgressSyncMessage msg, Supplier<NetworkEvent.Context> ctx) {
+        Metabolism metabolism = getClientMetabolism(Minecraft.getInstance());
+        metabolism.syncProgress(msg);
     }
 
     public static Metabolism getClientMetabolism(Minecraft mc) {

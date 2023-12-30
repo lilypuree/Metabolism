@@ -32,6 +32,7 @@ public class MetabolismMod {
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forgebus = MinecraftForge.EVENT_BUS;
         Registration.LOOT_CONDITIONS.register(modbus);
+        Registration.MOB_EFFECTS.register(modbus);
 
         Config.register();
         Network.init();

@@ -39,7 +39,7 @@ public class Config {
 
 
         public ServerConfig(Builder builder) {
-            preciseFeedback = builder.comment("enable more precise heat feedback").define("metabolism.heat.preciseFeedback", false);
+            preciseFeedback = builder.comment("enable more precise heat feedback").define("progress.heat.preciseFeedback", false);
         }
 
         @Override
@@ -64,16 +64,23 @@ public class Config {
         public final IntValue energyBarOffsetY;
         public final DoubleValue energyBarTextScale;
 
+        public final BooleanValue showToolTip;
+        public final BooleanValue alwaysShowToolTip;
+
+
         public ClientConfig(Builder builder) {
             debugShowOverlay = builder.comment("Enable debug overlay").define("debug.overlay.show", false);
             debugOverlayAnchor = builder.comment("Position of the debug overlay").defineEnum("debug.overlay.anchor", Anchor.TOP_RIGHT);
             debugOverlayTextScale = builder.comment("Overlay text size. 1 = standard-sized text").defineInRange("debug.overlay.textscale", 0.75, 0.01, Double.MAX_VALUE);
 
-            energyBarShow = builder.comment("Make the energy bar visible").define("energy.bar.show", true);
-            energyBarAnchor = builder.comment("Position of the energy bar").defineEnum("energy.bar.anchor", Anchor.BOTTOM_LEFT);
-            energyBarOffsetX = builder.comment("Fine-tune the energy bar position").defineInRange("energy.bar.offsetX", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            energyBarOffsetY = builder.comment("Fine-tune the energy bar position").defineInRange("energy.bar.offsetY", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            energyBarTextScale = builder.comment("Display scale of the energy bar text").defineInRange("energy.bar.text.scale", 0.6, 0, Double.MAX_VALUE);
+            energyBarShow = builder.comment("Make the hydration bar visible").define("hydration.bar.show", true);
+            energyBarAnchor = builder.comment("Position of the hydration bar").defineEnum("hydration.bar.anchor", Anchor.BOTTOM_LEFT);
+            energyBarOffsetX = builder.comment("Fine-tune the hydration bar position").defineInRange("hydration.bar.offsetX", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            energyBarOffsetY = builder.comment("Fine-tune the hydration bar position").defineInRange("hydration.bar.offsetY", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            energyBarTextScale = builder.comment("Display scale of the hydration bar text").defineInRange("hydration.bar.text.scale", 0.6, 0, Double.MAX_VALUE);
+
+            showToolTip = builder.comment("Show metabolite tooltips").define("tooltip.show", true);
+            alwaysShowToolTip = builder.comment("Always show metabolite tooltips").define("tooltip.always", true);
         }
 
         @Override
@@ -114,6 +121,16 @@ public class Config {
         @Override
         public float energyBarTextScale() {
             return energyBarTextScale.get().floatValue();
+        }
+
+        @Override
+        public boolean showToolTip() {
+            return showToolTip.get();
+        }
+
+        @Override
+        public boolean alwaysShowToolTip() {
+            return alwaysShowToolTip.get();
         }
 
         @Override

@@ -60,8 +60,6 @@ public class AdvancedWeatherCheck implements LootItemCondition {
                 case HEATWAVE -> {
                     return level.isDay() && level.getBiome(pos).is(MetabolismTags.HOT_BIOMES);
                 }
-                case BLIZZARD -> {
-                }
             }
         }
         return false;
@@ -70,10 +68,7 @@ public class AdvancedWeatherCheck implements LootItemCondition {
     public boolean canHaveWeather(ServerLevel level, BlockPos pPos) {
         if (!level.canSeeSky(pPos)) {
             return false;
-        } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pPos).getY() > pPos.getY()) {
-            return false;
-        }
-        return true;
+        } else return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pPos).getY() <= pPos.getY();
     }
 
 

@@ -2,6 +2,7 @@ package lilypuree.metabolism.mixin;
 
 import lilypuree.metabolism.metabolism.FoodDataDuck;
 import lilypuree.metabolism.metabolism.Metabolism;
+import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -33,11 +34,22 @@ public abstract class PlayerMixin extends LivingEntity {
     @Shadow
     public abstract FoodData getFoodData();
 
+    @Shadow protected abstract boolean freeAt(BlockPos pPos);
+
     @Unique
     private boolean exhaustionHandled = false;
 
     protected PlayerMixin(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    @Unique
+    private void addProgress(float amount) {
+        if (!this.abilities.invulnerable) {
+            if (!this.level().isClientSide) {
+                getMetabolism().addProgress(amount);
+            }
+        }
     }
 
     @Unique
@@ -53,7 +65,7 @@ public abstract class PlayerMixin extends LivingEntity {
     private void consumeEnergy(float amount) {
         if (!this.abilities.invulnerable) {
             if (!this.level().isClientSide) {
-                getMetabolism().consumeEnergy(amount);
+                getMetabolism().consumeHydration(amount);
             }
         }
     }
@@ -74,7 +86,7 @@ public abstract class PlayerMixin extends LivingEntity {
         if (this.isSprinting()) {
             consumeEnergy(ENERGY_SPRINT_JUMP);
         } else {
-            consumeFood(FOOD_JUMP);
+            addProgress(PROGRESS_JUMP);
         }
         exhaustionHandled = true;
     }
@@ -82,14 +94,14 @@ public abstract class PlayerMixin extends LivingEntity {
     @Inject(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
     public void onActuallyHurt(DamageSource dmgSrc, float dmgAmount, CallbackInfo ci) {
         if (dmgSrc.getFoodExhaustion() > 0) {
-            consumeFood(FOOD_DMG);
+            addProgress(PROGRESS_DMG);
         }
         exhaustionHandled = true;
     }
 
     @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))
     public void onAttack(CallbackInfo ci) {
-        consumeFood(FOOD_ATK); //0.1F
+        addProgress(PROGRESS_ATK); //0.1F
         exhaustionHandled = true;
     }
 
@@ -100,40 +112,41 @@ public abstract class PlayerMixin extends LivingEntity {
         if (this.isSwimming()) {
             int dist = Math.round((float) Math.sqrt(x * x + y * y + z * z) * 100.0F);
             if (dist > 0) {
-                consumeEnergy(dist * 0.01F * ENERGY_SWIM);
+//                consumeFood(dist * 0.01F * ENERGY_SWIM);
                 exhaustionHandled = true;
             }
         } else if (this.isEyeInFluid(FluidTags.WATER)) {
             int dist = Math.round((float) Math.sqrt(x * x + y * y + z * z) * 100.0F);
             if (dist > 0) {
-                consumeFood(dist * 0.01F * ENERGY_SWIM);
+                addProgress(dist * 0.01F * PROGRESS_WALK);
                 exhaustionHandled = true;
             }
         } else if (this.isInWater()) {
             float dist = Math.round((float) Math.sqrt(x * x + z * z) * 100.0F);
             if (dist > 0) {
-                consumeFood(dist * 0.01F * FOOD_WALK);
+                addProgress(dist * 0.01F * PROGRESS_WALK);
                 exhaustionHandled = true;
             }
         } else if (this.onClimbable()) {
             if (y > 0) {
-                consumeFood((float) y * FOOD_CLIMB);
+                addProgress((float) y * PROGRESS_CLIMB);
             }
         } else if (this.onGround()) {
             int dist = Math.round((float) Math.sqrt(x * x + z * z) * 100.0F);
             if (dist > 0) {
                 if (this.isSprinting()) {
-                    consumeEnergy(dist * 0.01F * ENERGY_SPRINT);
+//                    consumeEnergy(dist * 0.01F * ENERGY_SPRINT);
                 } else if (this.isCrouching()) {
-                    consumeFood(dist * 0.01F * FOOD_CROUCH);
+                    addProgress(dist * 0.01F * PROGRESS_CROUCH);
                 } else {
-                    consumeFood(dist * 0.01F * FOOD_WALK);
+                    addProgress(dist * 0.01F * PROGRESS_WALK);
                 }
                 exhaustionHandled = true;
             }
         } else if (this.isFallFlying()) {
             float dist = Math.round(Math.sqrt(x * x + y * y + z * z));
-            consumeEnergy(dist * ENERGY_FLY);
+            consumeEnergy(dist * ENERGY_FOOD_FLY);
+            consumeFood(dist * ENERGY_FOOD_FLY);
         }
     }
 
@@ -147,7 +160,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
     @Inject(method = "tryToStartFallFlying", at = @At("HEAD"), cancellable = true)
     public void onTryToStartFallFlying(CallbackInfoReturnable<Boolean> cir) {
-        if (getMetabolism().getEnergy() <= 0)
+        if (getMetabolism().getHydration() <= 0)
             cir.setReturnValue(false);
     }
 }

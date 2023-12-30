@@ -34,16 +34,18 @@ public class FoodDataMixin implements FoodDataDuck {
 
     @Inject(method = "eat(IF)V", at = @At("HEAD"), cancellable = true)
     public void eat(int foodLevelModifier, float saturationLevelModifier, CallbackInfo ci) {
-        metabolism.eat(foodLevelModifier, saturationLevelModifier);
+        metabolism.eat(null, Metabolite.createVanilla(foodLevelModifier, saturationLevelModifier));
         ci.cancel();
     }
 
     @Inject(method = "eat(Lnet/minecraft/world/item/Item;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At("HEAD"), cancellable = true, remap = false)
     public void onEat(Item item, ItemStack stack, LivingEntity entity, CallbackInfo ci) {
-        if (item.isEdible() && Metabolites.getMetabolites().containsKey(item)) {
-            Metabolite metabolite = Metabolites.getMetabolites().get(item);
-            metabolism.eat(metabolite);
-            ci.cancel();
+        if (item.isEdible()) {
+            Metabolite metabolite = Metabolites.getMetabolite(stack, entity);
+            if (metabolite != Metabolite.NONE) {
+                metabolism.eat(entity, metabolite);
+                ci.cancel();
+            }
         }
     }
 
@@ -51,26 +53,26 @@ public class FoodDataMixin implements FoodDataDuck {
     public void onTick(Player player, CallbackInfo ci) {
         metabolism.tick(player);
         this.lastFoodLevel = foodLevel;
-        this.foodLevel = metabolism.getEnergy() > 0 ? 10 : 1;
+        this.foodLevel = metabolism.getHydration() > 0 ? 10 : 1;   //enables vanilla sprinting when hydration is positive
         ci.cancel();
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
     public void onRead(CompoundTag tag, CallbackInfo ci) {
-        if (tag.contains("metabolism", CompoundTag.TAG_COMPOUND)) {
-            metabolism.readNBT(tag.getCompound("metabolism"));
+        if (tag.contains("progress", CompoundTag.TAG_COMPOUND)) {
+            metabolism.readNBT(tag.getCompound("progress"));
         }
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
     public void onWrite(CompoundTag tag, CallbackInfo ci) {
-        tag.put("metabolism", metabolism.writeNBT());
+        tag.put("progress", metabolism.writeNBT());
     }
 
     @Inject(method = "addExhaustion", at = @At("HEAD"))
     public void addExhaustion(float exhaustion, CallbackInfo ci) {
         //handles all other exhaustion gains
-        metabolism.consumeFood(exhaustion * EXHAUSTION_MULTIPLIER);
+        metabolism.addProgress(exhaustion * EXHAUSTION_MULTIPLIER);
     }
 
     @Inject(method = "setFoodLevel", at = @At("HEAD"), cancellable = true)
@@ -80,7 +82,7 @@ public class FoodDataMixin implements FoodDataDuck {
 
     @Inject(method = "needsFood", at = @At("HEAD"), cancellable = true)
     public void onNeedsFood(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(metabolism.needsFood());
+        cir.setReturnValue(true);
     }
 
     @Override

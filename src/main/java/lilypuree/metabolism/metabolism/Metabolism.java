@@ -1,30 +1,35 @@
 package lilypuree.metabolism.metabolism;
 
+import lilypuree.metabolism.Registration;
 import lilypuree.metabolism.config.Config;
 import lilypuree.metabolism.data.Environment;
 import lilypuree.metabolism.data.EnvironmentEffect;
 import lilypuree.metabolism.data.Metabolite;
 import lilypuree.metabolism.network.ClientSyncMessage;
 import lilypuree.metabolism.network.Network;
+import lilypuree.metabolism.network.ProgressSyncMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.network.NetworkDirection;
+
+import static lilypuree.metabolism.metabolism.MetabolismConstants.*;
 
 public class Metabolism {
     private static final double LN_10 = Math.log(10);
 
     //VARIABLES
     private float maxWarmth;
-    private float maxFood;
     private float warmth;
     private float heat;
-    private float energy;
+    private float hydration;
     private float food;
+    private float progress;
 
     /**
      * the amount of time it takes to reach approximately 90% of the given heat target, in ticks
@@ -36,62 +41,76 @@ public class Metabolism {
     //SYNCING
     private float lastSentWarmth;
     private float lastSentHeat;
-    private float lastSentEnergy;
+    private float lastSentHydration;
     private float lastSentFood;
+    private float lastSentProgress;
 
     //TICKING
-    private int warmthTick = 0;
-    private int damageTick = 0;
+    private int baseTick = 0;
+    private int envCounter = 0;
+    private int regenCounter = 0;
+    private int damageCounter = 0;
 
     public Metabolism() {
         this.maxWarmth = MetabolismConstants.MAX_WARMTH;
-        this.maxFood = MetabolismConstants.MAX_CAPACITY;
         this.warmth = maxWarmth;
         this.heat = 0.0F;
         this.food = MetabolismConstants.START_FOOD;
-        this.energy = MetabolismConstants.START_ENERGY;
+        this.hydration = MetabolismConstants.START_HYDRATION;
+        this.progress = 0.0F;
         this.setAdaptationTicks(MetabolismConstants.ADAPTATION_TICKS);
     }
 
     public void tick(Player player) {
         if (player.level().isClientSide) return;
-        warmthTick++;
-        damageTick++;
+        boolean suppressDamage = false;
+        baseTick++;
 
-        if (warmthTick >= MetabolismConstants.WARMTH_TICK_COUNT) {
+        if (baseTick >= BASE_TICK_COUNT) {
+            envCounter++;
+            damageCounter++;
+
+            if (warmth > player.getHealth()) {
+                //turns on fast regen
+                regenCounter += REGEN_CYCLES;
+                suppressDamage = player.isHurt();
+            } else regenCounter++;
+
+            baseTick = 0;
+        }
+        if (envCounter >= ENVIRONMENT_CYCLES) {
+            //apply environmental effects
             EnvironmentEffect.Combined effect = Environment.get().getCurrentEffect((ServerLevel) player.level(), player);
             applyHeatTarget(effect.getCombinedHeatTarget());
             warm(effect.getCombinedWarmthEffect());
-
-            boolean regen = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
-            if (regen && player.isHurt() && warmth > 0) {
-                player.heal(1.0F);
-                warmth = Math.max(0.0F, warmth - 1.0F);
-            }
-            warmthTick = 0;
+            envCounter = 0;
         }
-
-        if (damageTick >= MetabolismConstants.DAMAGE_TICK_COUNT) {
-            if (canBeHurt(player))
+        if (damageCounter >= DAMAGE_CYCLES) {
+            if (!suppressDamage && canBeHurt(player))
                 causeDamage(player);
-            damageTick = 0;
+            damageCounter = 0;
         }
+        if (regenCounter >= REGEN_CYCLES) {
+            regenHealth(player);
+            regenCounter = 0;
+        }
+        metabolismEffect(player);
 
-        boolean changed = warmth != lastSentWarmth || heat != lastSentHeat || food != lastSentFood || energy != lastSentEnergy;
-        if (changed && player instanceof ServerPlayer sPlayer) {
-            ClientSyncMessage msg = new ClientSyncMessage(heat, warmth, food, energy);
-            Network.channel.sendTo(msg, sPlayer.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
-            lastSentWarmth = warmth;
-            lastSentHeat = heat;
-            lastSentFood = food;
-            lastSentEnergy = energy;
+        syncToClient((ServerPlayer) player);
+    }
+
+    private void regenHealth(Player player) {
+        boolean regen = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
+        if (regen && player.isHurt() && warmth > 0) {
+            player.heal(1.0F);
+            warmth = Math.max(0.0F, warmth - 1.0F);
         }
     }
 
     private void causeDamage(Player player) {
         if (heat > 0) {
-            if (energy > 0)
-                energy = Math.max(0.0F, energy - calculateDrain());
+            if (hydration > 0)
+                hydration = Math.max(0.0F, hydration - calculateDrain());
             else
                 player.hurt(player.damageSources().starve(), 1.0F);
 
@@ -114,7 +133,7 @@ public class Metabolism {
             heat = heatTarget;
         } else if (heat > 0) {
             //HOT
-            heat = Mth.clamp(heat + heatChange(heatTarget, energy > 0), 0.0F, maxWarmth);
+            heat = Mth.clamp(heat + heatChange(heatTarget, hydration > 0), 0.0F, maxWarmth);
         } else if (heat < 0) {
             //COLD
             heat = Mth.clamp(heat + heatChange(heatTarget, food > 0), -maxWarmth, 0.0F);
@@ -133,29 +152,59 @@ public class Metabolism {
         }
     }
 
+    private void metabolismEffect(Player player) {
+        if (player.hasEffect(Registration.METABOLISM_EFFECT.get())) {
+            int amp = player.getEffect(Registration.METABOLISM_EFFECT.get()).getAmplifier();
+            progress += ((float) amp + 1) / BASE_TICK_COUNT / METABOLISM_CYCLES;
+        }
+
+        if (progress >= 1.0F) {
+            // Metabolise food and hydration to warmth
+            if (warmth < maxWarmth - Math.abs(heat)) {
+                consumeFood(1.0F);
+                consumeHydration(1.0F);
+                warm(1.0F);
+            }
+            progress -= 1.0F;
+        }
+    }
+
+    private void syncToClient(ServerPlayer player) {
+        boolean changed = warmth != lastSentWarmth || heat != lastSentHeat || food != lastSentFood || hydration != lastSentHydration;
+        if (changed) {
+            ClientSyncMessage msg = new ClientSyncMessage(heat, warmth, food, hydration);
+            Network.channel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+            lastSentWarmth = warmth;
+            lastSentHeat = heat;
+            lastSentFood = food;
+            lastSentHydration = hydration;
+        }
+
+        if (Math.abs(progress - lastSentProgress) >= 0.05f) {
+            ProgressSyncMessage msg = new ProgressSyncMessage(progress);
+            Network.channel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+            lastSentProgress = progress;
+        }
+    }
+
+    public void addProgress(float amount) {
+        this.progress += amount;
+    }
 
     public void consumeFood(float amount) {
-        float consumed = Math.min(amount, food);
-
-        this.food -= consumed;
-        this.energy += consumed;
+        this.food = Math.max(0.0F, food - amount);
     }
 
-    public void consumeEnergy(float amount) {
-        float consumed = Math.min(amount, energy);
-
-        this.energy -= consumed;
-//        this.warm(consumed * MetabolismConstants.ENERGY_WARMTH_CONVERSION_RATE);
+    public void consumeHydration(float amount) {
+        this.hydration = Math.max(0.0F, hydration - amount);
     }
 
-    public void eat(Metabolite metabolite) {
-        this.warm(metabolite.warmth());
+    public void eat(LivingEntity entity, Metabolite metabolite) {
         this.food += metabolite.food();
-        this.energy += metabolite.energy();
-    }
-
-    public void eat(float foodLevel, float saturationLevelModifier) {
-        this.food += foodLevel * MetabolismConstants.OTHER_FOOD_MULTIPLIER;
+        this.hydration += metabolite.hydration();
+        if (metabolite.warmth() > 0 && entity != null) {
+            entity.addEffect(new MetabolismEffect.Instance(metabolite.getEffectTicks(), metabolite.amplifier()));
+        }
     }
 
     public void peacefulWarmth() {
@@ -171,6 +220,10 @@ public class Metabolism {
         warmth = Mth.clamp(warmth + amount, 0.0F, maxWarmth - Mth.abs(heat));
     }
 
+    public float getMaxWarmth() {
+        return maxWarmth;
+    }
+
     public float getWarmth() {
         return warmth;
     }
@@ -179,21 +232,31 @@ public class Metabolism {
         return heat;
     }
 
-    public float getEnergy() {
-        return energy;
+    public float getProgress() {
+        return progress;
     }
 
     public float getFood() {
         return food;
     }
 
+
+    public float getHydration() {
+        return hydration;
+    }
+
+    //amount of ticks required for 1 resource to be drained
+    public float drainDuration() {
+        return BASE_TICK_COUNT * DAMAGE_CYCLES / calculateDrain();
+    }
+
     private float calculateDrain() {
-        return Mth.abs(heat) * MetabolismConstants.DRAIN_COEFFICIENT;
+        return Mth.abs(heat) * DRAIN_COEFFICIENT;
     }
 
     private void setAdaptationTicks(int ticks) {
         this.adaptationTicks = ticks;
-        this.heatCoefficent = (float) (LN_10 * MetabolismConstants.WARMTH_TICK_COUNT / adaptationTicks);
+        this.heatCoefficent = (float) (LN_10 * ENVIRONMENT_CYCLES * BASE_TICK_COUNT / adaptationTicks);
     }
 
 
@@ -202,39 +265,42 @@ public class Metabolism {
         return player.getHealth() > 10.0F || difficulty == Difficulty.HARD || player.getHealth() > 1.0F && difficulty == Difficulty.NORMAL;
     }
 
-    public boolean needsFood() {
-        return food < maxFood;
+    public boolean canEat(Metabolite metabolite) {
+        if (metabolite == Metabolite.NONE) return false;
+        boolean foodAllowed = food + metabolite.food() < MAX_FOOD;
+        boolean hydrationAllowed = hydration + metabolite.hydration() < MAX_FOOD;
+        return foodAllowed && hydrationAllowed;
     }
 
     public CompoundTag writeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putFloat("maxWarmth", maxWarmth);
-        nbt.putFloat("maxFood", maxFood);
         nbt.putFloat("warmth", warmth);
         nbt.putFloat("heat", heat);
-        nbt.putFloat("energy", energy);
         nbt.putFloat("food", food);
+        nbt.putFloat("hydration", hydration);
+        nbt.putFloat("progress", progress);
         return nbt;
     }
 
     public void readNBT(CompoundTag nbt) {
         maxWarmth = nbt.getFloat("maxWarmth");
-        maxFood = nbt.getFloat("maxFood");
         warmth = nbt.getFloat("warmth");
         heat = nbt.getFloat("heat");
-        energy = nbt.getFloat("energy");
         food = nbt.getFloat("food");
+        hydration = nbt.getFloat("hydration");
+        progress = nbt.getFloat("progress");
     }
 
     public void syncOnClient(ClientSyncMessage msg) {
         heat = msg.heat;
         warmth = msg.warmth;
-        energy = msg.energy;
+        hydration = msg.hydration;
         food = msg.food;
     }
 
-
-    public float getMaxWarmth() {
-        return maxWarmth;
+    public void syncProgress(ProgressSyncMessage msg) {
+        progress = msg.progress();
     }
+
 }

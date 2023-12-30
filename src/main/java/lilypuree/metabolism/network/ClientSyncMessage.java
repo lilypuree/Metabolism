@@ -6,30 +6,31 @@ public class ClientSyncMessage {
     public float heat;
     public float warmth;
     public float food;
-    public float energy;
-    
-    public ClientSyncMessage(){}
+    public float hydration;
 
-    public ClientSyncMessage(float heat, float warmth, float food, float energy) {
+    public ClientSyncMessage() {
+    }
+
+    public ClientSyncMessage(float heat, float warmth, float food, float hydration) {
         this.heat = heat;
         this.warmth = warmth;
         this.food = food;
-        this.energy = energy;
+        this.hydration = hydration;
     }
-    
-    public static ClientSyncMessage fromBytes(FriendlyByteBuf buf){
+
+    public static ClientSyncMessage fromBytes(FriendlyByteBuf buf) {
         ClientSyncMessage msg = new ClientSyncMessage();
         msg.heat = buf.readFloat();
         msg.warmth = buf.readFloat();
         msg.food = buf.readFloat();
-        msg.energy = buf.readFloat();
+        msg.hydration = buf.readFloat();
         return msg;
     }
-    
-    public void toBytes(FriendlyByteBuf buf){
+
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeFloat(heat);
         buf.writeFloat(warmth);
         buf.writeFloat(food);
-        buf.writeFloat(energy);
+        buf.writeFloat(hydration);
     }
 }

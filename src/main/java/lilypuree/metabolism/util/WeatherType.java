@@ -6,9 +6,9 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum WeatherType {
-    SUNNY("sunny"), RAIN("rain"), SNOW("snow"), HEATWAVE("heatwave"), BLIZZARD("blizzard");
+    SUNNY("sunny"), RAIN("rain"), SNOW("snow"), HEATWAVE("heatwave");
 
-    private String name;
+    private final String name;
 
     WeatherType(String name) {
         this.name = name;

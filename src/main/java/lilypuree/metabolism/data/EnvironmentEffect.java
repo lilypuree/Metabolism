@@ -62,7 +62,7 @@ public class EnvironmentEffect {
 
 
     public static class Combined {
-        private boolean isNight;
+        private final boolean isNight;
         private float additiveWarmthEffect = 0;
         private float warmthEffect = 0;
         private float additiveHeatTarget = 0;
