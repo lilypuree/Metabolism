@@ -6,7 +6,6 @@ import lilypuree.metabolism.MetabolismMod;
 import lilypuree.metabolism.client.ClientHandler;
 import lilypuree.metabolism.config.Config;
 import lilypuree.metabolism.metabolism.Metabolism;
-import lilypuree.metabolism.metabolism.MetabolismConstants;
 import lilypuree.metabolism.util.Anchor;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -43,7 +42,7 @@ public class MetabolismDisplayHandler extends Screen {
 
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
-        if (player == null || player.isInvulnerable()) return;
+        if (player == null || player.getAbilities().invulnerable) return;
 
         Metabolism metabolism = ClientHandler.getClientMetabolism(mc);
         render(event.getGuiGraphics(), mc, metabolism);

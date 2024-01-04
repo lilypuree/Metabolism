@@ -1,9 +1,0 @@
-{
-  "conditions": [
-    {
-      "condition": "metabolism:advanced_weather_check",
-      "weather_type": "heatwave"
-    }
-  ],
-  "heat_target": 8.0
-}

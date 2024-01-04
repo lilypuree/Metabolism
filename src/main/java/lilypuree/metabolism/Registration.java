@@ -1,7 +1,7 @@
 package lilypuree.metabolism;
 
+import lilypuree.metabolism.environment.AdvancedLocationCheck;
 import lilypuree.metabolism.metabolism.MetabolismEffect;
-import lilypuree.metabolism.util.AdvancedWeatherCheck;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.level.storage.loot.Serializer;
@@ -15,7 +15,7 @@ public class Registration {
     public static final DeferredRegister<LootItemConditionType> LOOT_CONDITIONS = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, MetabolismMod.MOD_ID);
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, MetabolismMod.MOD_ID);
 
-    public static final RegistryObject<LootItemConditionType> ADVANCED_WEATHER_CHECK = registerLootCondition("advanced_weather_check", new AdvancedWeatherCheck.Serializer());
+    public static final RegistryObject<LootItemConditionType> ADVANCED_LOCATION_CHECK = registerLootCondition("advanced_location_check", new AdvancedLocationCheck.Serializer());
 
     public static final RegistryObject<MobEffect> METABOLISM_EFFECT = MOB_EFFECTS.register("metabolism", MetabolismEffect::new);
 

@@ -2,9 +2,9 @@ package lilypuree.metabolism.metabolism;
 
 import lilypuree.metabolism.Registration;
 import lilypuree.metabolism.config.Config;
-import lilypuree.metabolism.data.Environment;
-import lilypuree.metabolism.data.EnvironmentEffect;
-import lilypuree.metabolism.data.Metabolite;
+import lilypuree.metabolism.environment.Environment;
+import lilypuree.metabolism.environment.EnvironmentEffect;
+import lilypuree.metabolism.metabolite.Metabolite;
 import lilypuree.metabolism.network.ClientSyncMessage;
 import lilypuree.metabolism.network.Network;
 import lilypuree.metabolism.network.ProgressSyncMessage;
@@ -61,8 +61,11 @@ public class Metabolism {
         this.setAdaptationTicks(MetabolismConstants.ADAPTATION_TICKS);
     }
 
+    public static Metabolism get(Player player) {
+        return ((FoodDataDuck) player.getFoodData()).getMetabolism();
+    }
+
     public void tick(Player player) {
-        if (player.level().isClientSide) return;
         boolean suppressDamage = false;
         baseTick++;
 
@@ -86,7 +89,7 @@ public class Metabolism {
             envCounter = 0;
         }
         if (damageCounter >= DAMAGE_CYCLES) {
-            if (!suppressDamage && canBeHurt(player))
+            if (!suppressDamage)
                 causeDamage(player);
             damageCounter = 0;
         }
@@ -110,21 +113,28 @@ public class Metabolism {
     private void causeDamage(Player player) {
         if (heat > 0) {
             if (hydration > 0)
-                hydration = Math.max(0.0F, hydration - calculateDrain());
-            else
-                player.hurt(player.damageSources().starve(), 1.0F);
-
+                consumeHydration(calculateDrain());
+            else {
+                consumeFood(1.0F);
+                if (canBeHurt(player))
+                    player.hurt(player.damageSources().starve(), 1.0F);
+            }
         } else if (heat < 0) {
             if (food > 0)
-                food = Math.max(0.0F, food - calculateDrain());
-            else
-                player.hurt(player.damageSources().starve(), 1.0F);
+                consumeFood(calculateDrain());
+            else {
+                consumeHydration(1.0F);
+                if (canBeHurt(player))
+                    player.hurt(player.damageSources().starve(), 1.0F);
+            }
         }
 
-        if (heat == maxWarmth) {
-            player.hurt(player.damageSources().inFire(), 1.0F);
-        } else if (heat == -maxWarmth) {
-            player.hurt(player.damageSources().freeze(), 1.0F);
+        if (canBeHurt(player)) {
+            if (heat == maxWarmth) {
+                player.hurt(player.damageSources().inFire(), 1.0F);
+            } else if (heat == -maxWarmth) {
+                player.hurt(player.damageSources().freeze(), 1.0F);
+            }
         }
     }
 
@@ -160,7 +170,7 @@ public class Metabolism {
 
         if (progress >= 1.0F) {
             // Metabolise food and hydration to warmth
-            if (warmth < maxWarmth - Math.abs(heat)) {
+            if (food > 0 && hydration > 0 && warmth < maxWarmth - Math.abs(heat)) {
                 consumeFood(1.0F);
                 consumeHydration(1.0F);
                 warm(1.0F);
@@ -204,6 +214,8 @@ public class Metabolism {
         this.hydration += metabolite.hydration();
         if (metabolite.warmth() > 0 && entity != null) {
             entity.addEffect(new MetabolismEffect.Instance(metabolite.getEffectTicks(), metabolite.amplifier()));
+        } else if (metabolite.warmth() < 0) {
+            this.warm(metabolite.warmth());
         }
     }
 

@@ -1,6 +1,10 @@
 {
   "conditions": [
     {
+      "condition": "metabolism:advanced_location_check",
+      "type": "exposed"
+    },
+    {
       "condition": "minecraft:location_check",
       "predicate": {
         "dimension": "minecraft:overworld",
@@ -12,5 +16,6 @@
       }
     }
   ],
-  "heat_target": -12.0
+  "heat_target": -8.0,
+  "night_multiplier": 1.5
 }

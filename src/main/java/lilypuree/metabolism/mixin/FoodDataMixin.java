@@ -1,9 +1,9 @@
 package lilypuree.metabolism.mixin;
 
-import lilypuree.metabolism.data.Metabolite;
-import lilypuree.metabolism.data.Metabolites;
 import lilypuree.metabolism.metabolism.FoodDataDuck;
 import lilypuree.metabolism.metabolism.Metabolism;
+import lilypuree.metabolism.metabolite.Metabolite;
+import lilypuree.metabolism.metabolite.Metabolites;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static lilypuree.metabolism.metabolism.MetabolismConstants.EXHAUSTION_MULTIPLIER;
 
 @Mixin(FoodData.class)
-public class FoodDataMixin implements FoodDataDuck {
+public abstract class FoodDataMixin implements FoodDataDuck {
 
     @Shadow
     private int foodLevel;
@@ -51,9 +51,13 @@ public class FoodDataMixin implements FoodDataDuck {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void onTick(Player player, CallbackInfo ci) {
-        metabolism.tick(player);
         this.lastFoodLevel = foodLevel;
-        this.foodLevel = metabolism.getHydration() > 0 ? 10 : 1;   //enables vanilla sprinting when hydration is positive
+        if (player.getAbilities().invulnerable) {
+            this.foodLevel = 20;
+        } else {
+            metabolism.tick(player);
+            this.foodLevel = metabolism.getHydration() > 0 ? 10 : 1; //disables sprinting when hydration is zero
+        }
         ci.cancel();
     }
 
@@ -75,10 +79,10 @@ public class FoodDataMixin implements FoodDataDuck {
         metabolism.addProgress(exhaustion * EXHAUSTION_MULTIPLIER);
     }
 
-    @Inject(method = "setFoodLevel", at = @At("HEAD"), cancellable = true)
-    public void onSetFood(CallbackInfo ci) {
-        ci.cancel();
-    }
+//    @Inject(method = "setFoodLevel", at = @At("HEAD"), cancellable = true)
+//    public void onSetFood(CallbackInfo ci) {
+//        ci.cancel();
+//    }
 
     @Inject(method = "needsFood", at = @At("HEAD"), cancellable = true)
     public void onNeedsFood(CallbackInfoReturnable<Boolean> cir) {

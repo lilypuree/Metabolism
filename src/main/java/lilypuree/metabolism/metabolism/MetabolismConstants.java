@@ -22,9 +22,9 @@ public class MetabolismConstants {
     public static final float PROGRESS_WALK = 0.001F;
     public static final float PROGRESS_CROUCH = 0.002F;
     public static final float PROGRESS_CLIMB = 0.002F;
-    public static final float ENERGY_SWIM = 0.05F;
-    public static final float ENERGY_SPRINT = 0.1F; //about 3 minutes sprinting = 100 hydration
-    public static final float ENERGY_FOOD_FLY = 0.03F; //about 1 minutes of flying down = 100 hydration
+    public static final float PROGRESS_SWIM = 0.05F;
+    public static final float PROGRESS_SPRINT = 0.05F;
+    public static final float ENERGY_FOOD_FLY = 0.03F; 
     public static final float EXHAUSTION_MULTIPLIER = 1.0F; 
     public static final float OTHER_FOOD_MULTIPLIER = 0.5F;
 }

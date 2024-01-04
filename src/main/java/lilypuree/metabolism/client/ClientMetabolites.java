@@ -1,8 +1,7 @@
 package lilypuree.metabolism.client;
 
 import lilypuree.metabolism.MetabolismMod;
-import lilypuree.metabolism.data.Metabolite;
-import lilypuree.metabolism.data.Metabolites;
+import lilypuree.metabolism.metabolite.Metabolite;
 import net.minecraft.world.item.Item;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package lilypuree.metabolism.data;
+package lilypuree.metabolism.metabolite;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -16,6 +16,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,11 +56,11 @@ public class Metabolites extends SimpleJsonResourceReloadListener {
     public static Map<Item, Metabolite> getMetabolites() {
         return DistExecutor.unsafeRunForDist(
                 () -> ClientMetabolites::getClientMetabolites,
-                () -> Metabolites::getMetaboliteMap
+                () -> Metabolites::getServerMetaboliteMap
         );
     }
 
-    public static Map<Item, Metabolite> getMetaboliteMap() {
+    public static Map<Item, Metabolite> getServerMetaboliteMap() {
         if (currentInstance == null)
             throw new RuntimeException("Tried to access Metabolites too early!");
         return currentInstance.metaboliteMap;
@@ -68,15 +69,18 @@ public class Metabolites extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler) {
         ImmutableMap.Builder<Item, Metabolite> builder = ImmutableMap.builder();
-        map.forEach((location, value) -> {
-            Item item = ForgeRegistries.ITEMS.getValue(location);
-            if (item != Items.AIR) {
-                Metabolite metabolite = Metabolite.CODEC.parse(JsonOps.INSTANCE, value)
-                        .getOrThrow(false, prefix("Metabolite for " + location + ": "));
-                builder.put(item, metabolite);
-            } else
-                LOGGER.warn("defined metabolite for nonexistent item " + location);
-        });
+        map.entrySet().stream()
+                .filter(entry -> ModList.get().isLoaded(entry.getKey().getNamespace()))
+                .forEach(entry -> {
+                    ResourceLocation location = entry.getKey();
+                    Item item = ForgeRegistries.ITEMS.getValue(location);
+                    if (item != Items.AIR) {
+                        Metabolite metabolite = Metabolite.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
+                                .getOrThrow(false, prefix("Metabolite for " + location + ": "));
+                        builder.put(item, metabolite);
+                    } else
+                        LOGGER.warn("defined metabolite for nonexistent item " + location);
+                });
         this.metaboliteMap = builder.build();
 
         LOGGER.debug("Finished parsing metabolites");

@@ -1,7 +1,9 @@
-package lilypuree.metabolism.data;
+package lilypuree.metabolism.environment;
 
-import com.google.gson.*;
-import lilypuree.metabolism.metabolism.Metabolism;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import lilypuree.metabolism.mixin.LocationCheckAccessor;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.Position;
@@ -9,7 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
@@ -113,9 +114,9 @@ public class EnvironmentEffect {
             if (combinedHeatTarget == 0)
                 return 0;
             else if (combinedHeatTarget > 0) { //HOT
-                return Math.max(combinedHeatTarget + additiveHeatResistance, 0);
+                return Math.max(combinedHeatTarget + heatResistance + additiveHeatResistance, 0);
             } else { //COLD
-                return Math.min(combinedHeatTarget + additiveColdResistance, 0);
+                return Math.min(combinedHeatTarget + coldResistance + additiveColdResistance, 0);
             }
         }
 

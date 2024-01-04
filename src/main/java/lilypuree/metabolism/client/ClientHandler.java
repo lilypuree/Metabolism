@@ -2,10 +2,10 @@ package lilypuree.metabolism.client;
 
 
 import lilypuree.metabolism.metabolism.Metabolism;
-import lilypuree.metabolism.metabolism.FoodDataDuck;
 import lilypuree.metabolism.network.ClientSyncMessage;
 import lilypuree.metabolism.network.ProgressSyncMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -29,6 +29,6 @@ public class ClientHandler {
     }
 
     public static Metabolism getClientMetabolism(Minecraft mc) {
-        return ((FoodDataDuck) mc.player.getFoodData()).getMetabolism();
+        return Metabolism.get(mc.player);
     }
 }

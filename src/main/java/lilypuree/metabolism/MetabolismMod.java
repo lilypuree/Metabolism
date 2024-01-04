@@ -2,9 +2,9 @@ package lilypuree.metabolism;
 
 import com.mojang.logging.LogUtils;
 import lilypuree.metabolism.compat.AppleSkinEventHandler;
-import lilypuree.metabolism.data.Environment;
 import lilypuree.metabolism.config.Config;
-import lilypuree.metabolism.data.Metabolites;
+import lilypuree.metabolism.environment.Environment;
+import lilypuree.metabolism.metabolite.Metabolites;
 import lilypuree.metabolism.network.MetabolitesPacket;
 import lilypuree.metabolism.network.Network;
 import net.minecraft.resources.ResourceLocation;
@@ -63,10 +63,10 @@ public class MetabolismMod {
 
     private void syncMetabolites(OnDatapackSyncEvent event) {
         if (event.getPlayer() != null) {
-            Network.channel.sendTo(new MetabolitesPacket(Metabolites.getMetaboliteMap()), event.getPlayer().connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+            Network.channel.sendTo(new MetabolitesPacket(Metabolites.getServerMetaboliteMap()), event.getPlayer().connection.connection, NetworkDirection.PLAY_TO_CLIENT);
         } else {
             for (ServerPlayer player : event.getPlayerList().getPlayers()) {
-                Network.channel.sendTo(new MetabolitesPacket(Metabolites.getMetaboliteMap()), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+                Network.channel.sendTo(new MetabolitesPacket(Metabolites.getServerMetaboliteMap()), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
             }
         }
     }

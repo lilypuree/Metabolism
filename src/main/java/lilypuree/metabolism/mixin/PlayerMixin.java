@@ -2,7 +2,6 @@ package lilypuree.metabolism.mixin;
 
 import lilypuree.metabolism.metabolism.FoodDataDuck;
 import lilypuree.metabolism.metabolism.Metabolism;
-import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -34,7 +33,7 @@ public abstract class PlayerMixin extends LivingEntity {
     @Shadow
     public abstract FoodData getFoodData();
 
-    @Shadow protected abstract boolean freeAt(BlockPos pPos);
+    @Shadow public abstract void die(DamageSource pCause);
 
     @Unique
     private boolean exhaustionHandled = false;
@@ -112,7 +111,7 @@ public abstract class PlayerMixin extends LivingEntity {
         if (this.isSwimming()) {
             int dist = Math.round((float) Math.sqrt(x * x + y * y + z * z) * 100.0F);
             if (dist > 0) {
-//                consumeFood(dist * 0.01F * ENERGY_SWIM);
+                addProgress(dist * 0.01F * PROGRESS_SWIM);
                 exhaustionHandled = true;
             }
         } else if (this.isEyeInFluid(FluidTags.WATER)) {
@@ -135,7 +134,7 @@ public abstract class PlayerMixin extends LivingEntity {
             int dist = Math.round((float) Math.sqrt(x * x + z * z) * 100.0F);
             if (dist > 0) {
                 if (this.isSprinting()) {
-//                    consumeEnergy(dist * 0.01F * ENERGY_SPRINT);
+                    addProgress(dist  * 0.01F * PROGRESS_SPRINT);
                 } else if (this.isCrouching()) {
                     addProgress(dist * 0.01F * PROGRESS_CROUCH);
                 } else {

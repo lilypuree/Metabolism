@@ -1,10 +1,11 @@
 {
   "conditions": [
     {
-      "condition": "metabolism:advanced_weather_check",
-      "weather_type": "sunny"
+      "condition": "metabolism:advanced_location_check",
+      "type": "exposed"
     }
   ],
   "is_additive": true,
-  "warmth_effect": 0.1
+  "night_multiplier": 0,
+  "warmth_effect": 0.2
 }

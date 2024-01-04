@@ -37,7 +37,6 @@ public class Config {
     private static class ServerConfig implements MetabolismServerConfig {
         public final BooleanValue preciseFeedback;
 
-
         public ServerConfig(Builder builder) {
             preciseFeedback = builder.comment("enable more precise heat feedback").define("progress.heat.preciseFeedback", false);
         }

@@ -1,4 +1,4 @@
-package lilypuree.metabolism.data;
+package lilypuree.metabolism.metabolite;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -10,8 +10,8 @@ public record Metabolite(float food, float hydration, float warmth, int amplifie
     public static final Metabolite NONE = new Metabolite(0, 0, 0, 0);
     public static final Codec<Metabolite> CODEC = RecordCodecBuilder.create(inst ->
             inst.group(
-                    Codec.FLOAT.fieldOf("food").forGetter(Metabolite::food),
-                    Codec.FLOAT.fieldOf("hydration").forGetter(Metabolite::hydration),
+                    Codec.FLOAT.optionalFieldOf("food", 0.0F).forGetter(Metabolite::food),
+                    Codec.FLOAT.optionalFieldOf("hydration", 0.0F).forGetter(Metabolite::hydration),
                     Codec.FLOAT.optionalFieldOf("warmth", 0.0F).forGetter(Metabolite::warmth),
                     Codec.INT.optionalFieldOf("amplifier", 0).forGetter(Metabolite::amplifier)
             ).apply(inst, Metabolite::new));

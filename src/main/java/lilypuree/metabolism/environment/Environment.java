@@ -1,4 +1,4 @@
-package lilypuree.metabolism.data;
+package lilypuree.metabolism.environment;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
@@ -20,7 +20,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.lang3.mutable.MutableFloat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

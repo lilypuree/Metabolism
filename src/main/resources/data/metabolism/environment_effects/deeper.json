@@ -10,7 +10,17 @@
           }
         }
       }
+    },
+    {
+      "condition": "inverted",
+      "term": {
+        "condition": "location_check",
+        "predicate": {
+          "biome": "minecraft:deep_dark"
+        }
+      }
     }
+    
   ],
   "heat_target": 8.0
 }

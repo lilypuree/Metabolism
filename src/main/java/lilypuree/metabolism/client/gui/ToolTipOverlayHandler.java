@@ -4,11 +4,10 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
-
 import lilypuree.metabolism.MetabolismMod;
 import lilypuree.metabolism.config.Config;
-import lilypuree.metabolism.data.Metabolite;
-import lilypuree.metabolism.data.Metabolites;
+import lilypuree.metabolism.metabolite.Metabolite;
+import lilypuree.metabolism.metabolite.Metabolites;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,14 +17,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
-import squeek.appleskin.api.event.FoodValuesEvent;
-import squeek.appleskin.api.event.TooltipOverlayEvent;
-import squeek.appleskin.api.food.FoodValues;
 
 public class ToolTipOverlayHandler {
     public static final ToolTipOverlayHandler INSTANCE = new ToolTipOverlayHandler();
@@ -79,12 +77,12 @@ public class ToolTipOverlayHandler {
             int offsetX = x;
 
             guiGraphics.blit(TEXTURE, offsetX, y, 18, 9, 9, 9);
-            renderString(guiGraphics, font, offsetX + 9, y, 0.75f, metaboliteToolTip.foodText);
+            renderString(guiGraphics, font, offsetX + 9, y + 1, 0.75f, metaboliteToolTip.foodText);
 
             offsetX += 18 + font.width(metaboliteToolTip.foodText);
 
             guiGraphics.blit(TEXTURE, offsetX, y, 27, 9, 9, 9);
-            renderString(guiGraphics, font, offsetX + 9, y, 0.75f, metaboliteToolTip.hydrationText);
+            renderString(guiGraphics, font, offsetX + 9, y + 1, 0.75f, metaboliteToolTip.hydrationText);
 
             if (metaboliteToolTip.warmthText != null) {
                 offsetX = x;
@@ -92,7 +90,7 @@ public class ToolTipOverlayHandler {
 
                 guiGraphics.blit(TEXTURE, offsetX, y, 18, 0, 9, 9);
                 guiGraphics.blit(TEXTURE, offsetX, y, 0, 0, 9, 9);
-                renderString(guiGraphics, font, offsetX + 9, y, 0.75f, metaboliteToolTip.warmthText);
+                renderString(guiGraphics, font, offsetX + 9, y + 1, 0.75f, metaboliteToolTip.warmthText);
             }
 
             RenderSystem.disableBlend();
@@ -125,10 +123,11 @@ public class ToolTipOverlayHandler {
             hydrationText = String.format("x%.1f", metabolite.hydration());
             if (metabolite.warmth() > 0)
                 warmthText = String.format("x%.1f over %.1fs", metabolite.getEffectiveWarmth(), metabolite.getEffectTicks() / 20.0F);
+            else if (metabolite.warmth() < 0)
+                warmthText = String.format("x%.1f", metabolite.getEffectiveWarmth());
+
         }
     }
-
-
 
 
     @SubscribeEvent
@@ -157,7 +156,10 @@ public class ToolTipOverlayHandler {
         if (!shouldShowTooltip)
             return false;
 
-        return hoveredStack.getFoodProperties(player) != null;
+        if (hoveredStack.is(Items.POTION) && PotionUtils.getPotion(hoveredStack) == Potions.WATER) {
+            return true;
+        } else
+            return hoveredStack.getFoodProperties(player) != null;
     }
 
     private static boolean isShiftKeyDown() {

@@ -2,9 +2,7 @@ package lilypuree.metabolism.network;
 
 import com.google.common.collect.ImmutableMap;
 import lilypuree.metabolism.client.ClientMetabolites;
-import lilypuree.metabolism.data.Environment;
-import lilypuree.metabolism.data.Metabolite;
-import lilypuree.metabolism.data.Metabolites;
+import lilypuree.metabolism.metabolite.Metabolite;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;

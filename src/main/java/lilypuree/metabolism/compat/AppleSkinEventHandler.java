@@ -1,6 +1,5 @@
 package lilypuree.metabolism.compat;
 
-import lilypuree.metabolism.data.Metabolites;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import squeek.appleskin.api.event.HUDOverlayEvent;
 import squeek.appleskin.api.event.TooltipOverlayEvent;

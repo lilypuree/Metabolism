@@ -2,9 +2,9 @@
   "conditions": [
     {
       "condition": "metabolism:advanced_location_check",
-      "type": "snowy"
+      "type": "hot_biome"
     }
   ],
-  "is_additive": true,
-  "heat_target": -8.0
+  "heat_target": 8.0,
+  "night_multiplier": 0.0
 }
