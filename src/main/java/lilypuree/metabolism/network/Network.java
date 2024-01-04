@@ -27,7 +27,6 @@ public class Network {
                 .consumerMainThread(ClientHandler::handleSyncMessage)
                 .add();
 
-
         channel.messageBuilder(ProgressSyncMessage.class, id++)
                 .decoder(ProgressSyncMessage::fromBytes)
                 .encoder(ProgressSyncMessage::toBytes)
@@ -35,6 +34,4 @@ public class Network {
                 .add();
 
     }
-
-
 }

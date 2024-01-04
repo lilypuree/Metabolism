@@ -14,3 +14,7 @@
 - Deep dark is cold
 - Sprinting & swimming gives metabolism progress
 - Other minor bug fixes
+
+### [1.1.2] (Minecraft 1.20.1)
+
+- Fixes crash on dedecated server ([#1](https://github.com/lilypuree/Metabolism/issues/1)) 
