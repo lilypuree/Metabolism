@@ -18,3 +18,7 @@
 ### [1.1.2] (Minecraft 1.20.1)
 
 - Fixes crash on dedecated server ([#1](https://github.com/lilypuree/Metabolism/issues/1)) 
+
+### [1.1.3] (Minecraft 1.20.1)
+
+- Fixes crash on server join ([#2](https://github.com/lilypuree/Metabolism/issues/2)) 

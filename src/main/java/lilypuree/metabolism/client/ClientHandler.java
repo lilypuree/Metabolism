@@ -24,11 +24,12 @@ public class ClientHandler {
     }
 
     public static void handleSyncProgress(ProgressSyncMessage msg, Supplier<NetworkEvent.Context> ctx) {
+
         Metabolism metabolism = getClientMetabolism(Minecraft.getInstance());
         metabolism.syncProgress(msg);
     }
 
     public static Metabolism getClientMetabolism(Minecraft mc) {
-        return ((FoodDataDuck)mc.player).getMetabolism();       //Cannot use Metabolism.get() due to crash on dedicated server
+        return ((FoodDataDuck) mc.player.getFoodData()).getMetabolism();       //Cannot use Metabolism.get() due to crash on dedicated server
     }
 }

@@ -229,7 +229,7 @@ public class Metabolism {
     }
 
     public void warm(float amount) {
-        warmth = Mth.clamp(warmth + amount, 0.0F, maxWarmth - Mth.abs(heat));
+        setWarmth(warmth + amount);
     }
 
     public float getMaxWarmth() {
@@ -254,8 +254,31 @@ public class Metabolism {
 
 
     public float getHydration() {
-        return hydration;
+        return this.hydration;
     }
+
+    public void setWarmth(float warmth) {
+        this.warmth = Mth.clamp(warmth, 0.0F, maxWarmth - Mth.abs(heat));
+    }
+
+    public void setHeat(float heat) {
+        this.heat = Mth.clamp(heat, -maxWarmth, maxWarmth);
+        setWarmth(warmth);
+    }
+
+    public void setProgress(float progress) {
+        this.progress = progress;
+    }
+
+    public void setFood(float food) {
+        this.food = Mth.clamp(food, 0.0F, MAX_FOOD);
+    }
+
+
+    public void setHydration(float hydration) {
+        this.hydration = Mth.clamp(hydration, 0.0F, MAX_FOOD);
+    }
+
 
     //amount of ticks required for 1 resource to be drained
     public float drainDuration() {

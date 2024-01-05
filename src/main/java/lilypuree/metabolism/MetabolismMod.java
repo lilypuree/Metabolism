@@ -1,6 +1,7 @@
 package lilypuree.metabolism;
 
 import com.mojang.logging.LogUtils;
+import lilypuree.metabolism.command.ModCommands;
 import lilypuree.metabolism.compat.AppleSkinEventHandler;
 import lilypuree.metabolism.config.Config;
 import lilypuree.metabolism.environment.Environment;
@@ -41,6 +42,7 @@ public class MetabolismMod {
         modbus.addListener(this::clientInit);
         forgebus.addListener(this::addListener);
         forgebus.addListener(this::syncMetabolites);
+        forgebus.addListener(ModCommands::registerAll);
     }
 
     private void clientInit(final FMLClientSetupEvent event) {
