@@ -1,5 +1,6 @@
 package lilypuree.metabolism.metabolism;
 
+import lilypuree.metabolism.MetabolismGameRules;
 import lilypuree.metabolism.Registration;
 import lilypuree.metabolism.config.Config;
 import lilypuree.metabolism.environment.Environment;
@@ -83,8 +84,12 @@ public class Metabolism {
         }
         if (envCounter >= ENVIRONMENT_CYCLES) {
             //apply environmental effects
-            EnvironmentEffect.Combined effect = Environment.get().getCurrentEffect((ServerLevel) player.level(), player);
-            applyHeatTarget(effect.getCombinedHeatTarget());
+            ServerLevel level = (ServerLevel) player.level();
+            EnvironmentEffect.Combined effect = Environment.get().getCurrentEffect(level, player);
+            if (level.getGameRules().getBoolean(MetabolismGameRules.RULE_DO_TEMPERATURE))
+                applyHeatTarget(effect.getCombinedHeatTarget());
+            else
+                applyHeatTarget(0);
             warm(effect.getCombinedWarmthEffect());
             envCounter = 0;
         }

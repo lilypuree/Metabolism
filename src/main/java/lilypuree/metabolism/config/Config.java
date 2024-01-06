@@ -57,11 +57,11 @@ public class Config {
         public final EnumValue<Anchor> debugOverlayAnchor;
         public final DoubleValue debugOverlayTextScale;
 
-        public final BooleanValue energyBarShow;
-        public final EnumValue<Anchor> energyBarAnchor;
-        public final IntValue energyBarOffsetX;
-        public final IntValue energyBarOffsetY;
-        public final DoubleValue energyBarTextScale;
+        public final BooleanValue metabolismOverlayShow;
+        public final EnumValue<Anchor> metabolismOverlayAnchor;
+        public final IntValue metabolismOverlayOffsetX;
+        public final IntValue metabolismOverlayOffsetY;
+        public final DoubleValue metabolismTextScale;
 
         public final BooleanValue showToolTip;
         public final BooleanValue alwaysShowToolTip;
@@ -72,11 +72,11 @@ public class Config {
             debugOverlayAnchor = builder.comment("Position of the debug overlay").defineEnum("debug.overlay.anchor", Anchor.TOP_RIGHT);
             debugOverlayTextScale = builder.comment("Overlay text size. 1 = standard-sized text").defineInRange("debug.overlay.textscale", 0.75, 0.01, Double.MAX_VALUE);
 
-            energyBarShow = builder.comment("Make the hydration bar visible").define("hydration.bar.show", true);
-            energyBarAnchor = builder.comment("Position of the hydration bar").defineEnum("hydration.bar.anchor", Anchor.BOTTOM_LEFT);
-            energyBarOffsetX = builder.comment("Fine-tune the hydration bar position").defineInRange("hydration.bar.offsetX", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            energyBarOffsetY = builder.comment("Fine-tune the hydration bar position").defineInRange("hydration.bar.offsetY", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            energyBarTextScale = builder.comment("Display scale of the hydration bar text").defineInRange("hydration.bar.text.scale", 0.6, 0, Double.MAX_VALUE);
+            metabolismOverlayShow = builder.comment("Make the metabolism hud visible").define("metabolism.overlay.show", true);
+            metabolismOverlayAnchor = builder.comment("Position of the metabolism hud").defineEnum("metabolism.overlay.anchor", Anchor.BOTTOM_LEFT);
+            metabolismOverlayOffsetX = builder.comment("Fine-tune the metabolism hud position").defineInRange("metabolism.overlay.offsetX", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            metabolismOverlayOffsetY = builder.comment("Fine-tune the metabolism hud position").defineInRange("metabolism.overlay.offsetY", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            metabolismTextScale = builder.comment("Display scale of the metabolism hud text").defineInRange("metabolism.overlay.textscale", 0.6, 0, Double.MAX_VALUE);
 
             showToolTip = builder.comment("Show metabolite tooltips").define("tooltip.show", true);
             alwaysShowToolTip = builder.comment("Always show metabolite tooltips").define("tooltip.always", true);
@@ -98,28 +98,28 @@ public class Config {
         }
 
         @Override
-        public boolean energyBarShow() {
-            return energyBarShow.get();
+        public boolean metabolismOverlayShow() {
+            return metabolismOverlayShow.get();
         }
 
         @Override
-        public Anchor energyBarAnchor() {
-            return energyBarAnchor.get();
+        public Anchor metabolismOverlayAnchor() {
+            return metabolismOverlayAnchor.get();
         }
 
         @Override
-        public int energyBarOffsetX() {
-            return energyBarOffsetX.get();
+        public int metabolismOverlayOffsetX() {
+            return metabolismOverlayOffsetX.get();
         }
 
         @Override
-        public int energyBarOffsetY() {
-            return energyBarOffsetY.get();
+        public int metabolismOverlayOffsetY() {
+            return metabolismOverlayOffsetY.get();
         }
 
         @Override
-        public float energyBarTextScale() {
-            return energyBarTextScale.get().floatValue();
+        public float metabolismOverlayTextScale() {
+            return metabolismTextScale.get().floatValue();
         }
 
         @Override

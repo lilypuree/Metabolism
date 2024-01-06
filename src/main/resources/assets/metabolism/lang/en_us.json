@@ -1,3 +1,7 @@
 {
-  "effect.metabolism.metabolism" : "metabolism"
+  "effect.metabolism.metabolism": "metabolism",
+  "command.metabolism.warmth": "Player Warmth: %s",
+  "command.metabolism.heat": "Player Heat: %s",
+  "command.metabolism.hydration": "Player Hydration: %s",
+  "command.metabolism.food": "Player Food: %s"
 }

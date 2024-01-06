@@ -17,8 +17,14 @@
 
 ### [1.1.2] (Minecraft 1.20.1)
 
-- Fixes crash on dedecated server ([#1](https://github.com/lilypuree/Metabolism/issues/1)) 
+- Fixes crash on dedicated server ([#1](https://github.com/lilypuree/Metabolism/issues/1)) 
 
 ### [1.1.3] (Minecraft 1.20.1)
 
-- Fixes crash on server join ([#2](https://github.com/lilypuree/Metabolism/issues/2)) 
+- Fixes crash on server join ([#2](https://github.com/lilypuree/Metabolism/issues/2))
+
+### [1.2.0] (Minecraft 1.20.1)
+
+- AdvancedLocationCheck loot condition can now check for biome tags
+- Added GameRule to disable temperature
+- Added commands to get, set, add metabolism variables

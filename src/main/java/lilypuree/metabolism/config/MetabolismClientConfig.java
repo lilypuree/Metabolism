@@ -14,15 +14,15 @@ public interface MetabolismClientConfig {
 
     // ENERGY BAR
 
-    boolean energyBarShow();
+    boolean metabolismOverlayShow();
 
-    Anchor energyBarAnchor();
+    Anchor metabolismOverlayAnchor();
 
-    int energyBarOffsetX();
+    int metabolismOverlayOffsetX();
 
-    int energyBarOffsetY();
+    int metabolismOverlayOffsetY();
 
-    float energyBarTextScale();
+    float metabolismOverlayTextScale();
 
     // TOOLTIPS
 

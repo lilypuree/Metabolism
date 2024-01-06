@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkDirection;
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ public class MetabolismMod {
 
         modbus.addListener(this::reloadConfig);
         modbus.addListener(this::clientInit);
+        modbus.addListener(this::commonSetup);
         forgebus.addListener(this::addListener);
         forgebus.addListener(this::syncMetabolites);
         forgebus.addListener(ModCommands::registerAll);
@@ -56,6 +58,10 @@ public class MetabolismMod {
             Config.CLIENT.reload();
         else if (event.getConfig().getType() == ModConfig.Type.COMMON)
             Config.SERVER.reload();
+    }
+    
+    private void commonSetup(final FMLCommonSetupEvent event){
+        MetabolismGameRules.init();
     }
 
     private void addListener(AddReloadListenerEvent event) {

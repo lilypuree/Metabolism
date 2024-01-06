@@ -38,7 +38,7 @@ public class MetabolismDisplayHandler extends Screen {
 
     @SubscribeEvent
     public void onRenderOverlay(RenderGuiOverlayEvent.Post event) {
-        if (event.getOverlay() != VanillaGuiOverlay.DEBUG_TEXT.type() || !Config.CLIENT.energyBarShow()) return;
+        if (event.getOverlay() != VanillaGuiOverlay.DEBUG_TEXT.type() || !Config.CLIENT.metabolismOverlayShow()) return;
 
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
@@ -51,9 +51,9 @@ public class MetabolismDisplayHandler extends Screen {
 
     public void render(GuiGraphics graphics, Minecraft mc, Metabolism metabolism) {
         RenderSystem.enableBlend();
-        Anchor anchor = Config.CLIENT.energyBarAnchor();
-        int posX = anchor.getX(mc.getWindow().getGuiScaledWidth(), 25, 5) + Config.CLIENT.energyBarOffsetX();
-        int posY = anchor.getY(mc.getWindow().getGuiScaledHeight(), 81, 5) + Config.CLIENT.energyBarOffsetY();
+        Anchor anchor = Config.CLIENT.metabolismOverlayAnchor();
+        int posX = anchor.getX(mc.getWindow().getGuiScaledWidth(), 25, 5) + Config.CLIENT.metabolismOverlayOffsetX();
+        int posY = anchor.getY(mc.getWindow().getGuiScaledHeight(), 81, 5) + Config.CLIENT.metabolismOverlayOffsetY();
 
         graphics.blit(TEXTURE, posX, posY, 231, 0, 25, 81); //background
         graphics.blit(TEXTURE, posX + 3, posY + 60, 18, 9, 9, 9); //food icon

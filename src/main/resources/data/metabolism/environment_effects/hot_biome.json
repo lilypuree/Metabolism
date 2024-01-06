@@ -2,7 +2,7 @@
   "conditions": [
     {
       "condition": "metabolism:advanced_location_check",
-      "type": "hot_biome"
+      "biome_tag": "#metabolism:hot_biomes"
     }
   ],
   "heat_target": 8.0,

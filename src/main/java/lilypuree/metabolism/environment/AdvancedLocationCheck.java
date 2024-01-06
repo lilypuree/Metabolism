@@ -9,7 +9,9 @@ import lilypuree.metabolism.MetabolismTags;
 import lilypuree.metabolism.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -27,9 +29,11 @@ import java.util.Set;
 public class AdvancedLocationCheck implements LootItemCondition {
 
     final Type type;
+    final TagKey<Biome> biomeTag;
 
-    public AdvancedLocationCheck(Type type) {
+    public AdvancedLocationCheck(Type type, TagKey<Biome> biomeTag) {
         this.type = type;
+        this.biomeTag = biomeTag;
     }
 
     @Override
@@ -48,7 +52,10 @@ public class AdvancedLocationCheck implements LootItemCondition {
         if (origin == null) return false;
         ServerLevel level = context.getLevel();
         BlockPos pos = BlockPos.containing(origin.x, origin.y, origin.z);
-        if (hasNoBlocksAbove(level, pos)) {
+
+        boolean matchesBiomeTag = (biomeTag == null) || level.getBiome(pos).is(biomeTag);
+
+        if (matchesBiomeTag && hasNoBlocksAbove(level, pos)) {
             Holder<Biome> biome = level.getBiome(pos);
             Biome.Precipitation precipitation = biome.value().getPrecipitationAt(pos);
 
@@ -62,9 +69,6 @@ public class AdvancedLocationCheck implements LootItemCondition {
                 case SNOWY -> {
                     return level.isRaining() && precipitation == Biome.Precipitation.SNOW;
                 }
-                case HOT_BIOME -> {
-                    return level.getBiome(pos).is(MetabolismTags.HOT_BIOMES);
-                }
             }
         }
         return false;
@@ -77,6 +81,8 @@ public class AdvancedLocationCheck implements LootItemCondition {
     public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<AdvancedLocationCheck> {
         public void serialize(JsonObject json, AdvancedLocationCheck value, JsonSerializationContext context) {
             json.addProperty("type", value.type.name());
+            if (value.biomeTag != null)
+                json.addProperty("biome_tag", value.biomeTag.toString());
         }
 
         /**
@@ -84,24 +90,25 @@ public class AdvancedLocationCheck implements LootItemCondition {
          */
         public AdvancedLocationCheck deserialize(JsonObject json, JsonDeserializationContext context) {
             String type = json.has("type") ? GsonHelper.getAsString(json, "type") : null;
-            return new AdvancedLocationCheck(Type.fromString(type));
+            String biomeTag = json.has("biome_tag") ? GsonHelper.getAsString(json, "biome_tag") : null;
+            return new AdvancedLocationCheck(Type.fromString(type), MetabolismTags.biomeTag(biomeTag));
         }
     }
 
     public enum Type {
-        EXPOSED("exposed"), RAINY("rainy"), SNOWY("snowy"), HOT_BIOME("hot_biome");
-    
+        EXPOSED("exposed"), RAINY("rainy"), SNOWY("snowy");
+
         private final String name;
-    
+
         Type(String name) {
             this.name = name;
         }
-    
+
         @Override
         public String toString() {
             return name;
         }
-    
+
         public static Type fromString(String name) {
             if (name != null) {
                 Optional<Type> locationType = Arrays.stream(values()).filter(type -> type.name.equals(name)).findAny();

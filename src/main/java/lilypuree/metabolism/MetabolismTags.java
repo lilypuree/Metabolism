@@ -6,8 +6,10 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 
 public class MetabolismTags {
-    private static TagKey<Biome> biomeTag(String path) {
-        return TagKey.create(Registries.BIOME, new ResourceLocation(MetabolismMod.MOD_ID, path));
+    public static TagKey<Biome> biomeTag(String path) {
+        if (path != null)
+            return TagKey.create(Registries.BIOME, new ResourceLocation(MetabolismMod.MOD_ID, path));
+        return null;
     }
 
     public static final TagKey<Biome> HOT_BIOMES = biomeTag("hot_biomes");

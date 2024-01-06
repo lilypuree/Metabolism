@@ -21,49 +21,30 @@ import java.util.function.Function;
 
 public class MetabolismCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandBuildContext) {
-//        LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal().requires(source -> source.hasPermission(2));
+        LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("metabolism").requires(source -> source.hasPermission(2));
 
-//        for (ResourceType type : ResourceType.values()){
-//            builder.then(Commands.literal(type.name)
-//                    .then(Commands.literal("get")
-//                            .then(Commands.argument("targets", EntityArgument.players())
-//                                    .executes(ctx -> runGet(ctx, type))
-//                                    )
-//                            .executes(ctx -> getSingle(ctx, ctx.getSource().getPlayer(), type)))
-//                    .then(Commands.literal("set")
-//                            .then(Commands.argument("targets", EntityArgument.players())
-//                                    .then(Commands.argument("amount", IntegerArgumentType.integer())
-//                                            .executes(ctx -> runSet())))))
-//        }
-
-                
-//                
-//        builder
-//                .then(Commands.literal("warmth")
-//                        .then(Commands.literal("get")
-//                                .then(Commands.argument("targets", EntityArgument.players())
-//                                        .executes(
-//                                                MetabolismCommand::runGet
-//                                        ))
-//                                .executes(ctx -> getSingle(ctx, ctx.getSource().getPlayer())))
-//                        .then(Commands.literal("set"))
-//                        .then(Commands.literal("add"))
-//                ).then(Commands.literal("heat")
-//                        .then(Commands.literal("get"))
-//                        .then(Commands.literal("set"))
-//                        .then(Commands.literal("add"))
-//                ).then(Commands.literal("food")
-//                        .then(Commands.literal("get"))
-//                        .then(Commands.literal("set"))
-//                        .then(Commands.literal("add"))
-//                ).then(Commands.literal("hydration")
-//                        .then(Commands.literal("get"))
-//                        .then(Commands.literal("set"))
-//                        .then(Commands.literal("add"))
-//                );
-
-
-//        dispatcher.register(builder);
+        for (ResourceType type : ResourceType.values()) {
+            builder.then(Commands.literal(type.name)
+                    .then(Commands.literal("get")
+                            .then(Commands.argument("targets", EntityArgument.players())
+                                    .executes(ctx -> runGet(ctx, type))
+                            ).executes(ctx -> getSingle(ctx, ctx.getSource().getPlayer(), type))
+                    ).then(Commands.literal("set")
+                            .then(Commands.argument("targets", EntityArgument.players())
+                                    .then(Commands.argument("amount", IntegerArgumentType.integer())
+                                            .executes(ctx -> runSet(ctx, type))
+                                    )
+                            )
+                    ).then(Commands.literal("add")
+                            .then(Commands.argument("targets", EntityArgument.players())
+                                    .then(Commands.argument("amount", IntegerArgumentType.integer())
+                                            .executes(ctx -> runAdd(ctx, type))
+                                    )
+                            )
+                    )
+            );
+        }
+        dispatcher.register(builder);
     }
 
     private static int runGet(CommandContext<CommandSourceStack> ctx, ResourceType type) throws CommandSyntaxException {

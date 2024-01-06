@@ -2,7 +2,7 @@ package lilypuree.metabolism.metabolism;
 
 public class MetabolismConstants {
     public static final int MAX_WARMTH = 20;
-    public static final float MAX_FOOD = 100;
+    public static final float MAX_FOOD = 99;
     public static final float START_HYDRATION = 19.0F;
     public static final float START_FOOD = 19.0F;
     public static final int BASE_TICK_COUNT = 10;
