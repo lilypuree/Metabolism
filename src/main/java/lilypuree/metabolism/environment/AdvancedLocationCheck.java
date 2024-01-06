@@ -10,6 +10,8 @@ import lilypuree.metabolism.Registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -91,7 +93,13 @@ public class AdvancedLocationCheck implements LootItemCondition {
         public AdvancedLocationCheck deserialize(JsonObject json, JsonDeserializationContext context) {
             String type = json.has("type") ? GsonHelper.getAsString(json, "type") : null;
             String biomeTag = json.has("biome_tag") ? GsonHelper.getAsString(json, "biome_tag") : null;
-            return new AdvancedLocationCheck(Type.fromString(type), MetabolismTags.biomeTag(biomeTag));
+            return new AdvancedLocationCheck(Type.fromString(type), biomeTag(biomeTag));
+        }
+
+        public TagKey<Biome> biomeTag(String location) {
+            if (location != null)
+                return TagKey.create(Registries.BIOME, new ResourceLocation(location));
+            return null;
         }
     }
 
