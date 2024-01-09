@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import lilypuree.metabolism.client.ClientMetabolites;
+import lilypuree.metabolism.util.Overrides;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -21,6 +22,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -31,14 +33,16 @@ public class Metabolites extends SimpleJsonResourceReloadListener {
     public static final Logger LOGGER = LogManager.getLogger("Metabolites");
     public static final String FOLDER = "metabolites";
 
+    private static final Map<Item, Metabolite.Modifier> originalModifiers = new HashMap<>();
     private ImmutableMap<Item, Metabolite> metaboliteMap;
 
     public Metabolites() {
         super(GSON, FOLDER);
         if (currentInstance == null)
             currentInstance = this;
-        else
+        else {
             reloadingInstance = this;
+        }
     }
 
     public static Metabolite getMetabolite(ItemStack item, LivingEntity entity) {
@@ -68,15 +72,26 @@ public class Metabolites extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, ProfilerFiller profiler) {
+
+        // reload original values for food, so if changes are removed they leave no trace
+
+        originalModifiers.forEach((item, modifier) -> {
+            modifier.apply(item);
+        });
+
         ImmutableMap.Builder<Item, Metabolite> builder = ImmutableMap.builder();
+
         map.entrySet().stream()
                 .filter(entry -> ModList.get().isLoaded(entry.getKey().getNamespace()))
                 .forEach(entry -> {
                     ResourceLocation location = entry.getKey();
                     Item item = ForgeRegistries.ITEMS.getValue(location);
                     if (item != Items.AIR) {
-                        Metabolite metabolite = Metabolite.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
-                                .getOrThrow(false, prefix("Metabolite for " + location + ": "));
+                        Metabolite metabolite = readMetabolite(entry.getValue(), location);
+                        if (metabolite.modifier() != Metabolite.Modifier.NONE) {
+                            originalModifiers.put(item, Metabolite.Modifier.fromItem(item));
+                            metabolite.modifier().apply(item);
+                        }
                         builder.put(item, metabolite);
                     } else
                         LOGGER.warn("defined metabolite for nonexistent item " + location);
@@ -89,6 +104,12 @@ public class Metabolites extends SimpleJsonResourceReloadListener {
             reloadingInstance = null;
         }
     }
+
+    private Metabolite readMetabolite(JsonElement element, ResourceLocation location) {
+        return Metabolite.CODEC.parse(JsonOps.INSTANCE, element)
+                .getOrThrow(false, prefix("Metabolite for " + location + ": "));
+    }
+
 
     private static Consumer<String> prefix(String pre) {
         return s -> LOGGER.error(pre + s);

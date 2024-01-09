@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "metabolism.refmap.json",
   "mixins": [
+    "CakeBlockMixin",
     "FoodDataMixin",
     "ItemMixin",
     "LocationCheckAccessor",

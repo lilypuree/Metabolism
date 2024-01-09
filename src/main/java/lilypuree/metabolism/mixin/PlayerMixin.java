@@ -77,7 +77,7 @@ public abstract class PlayerMixin extends LivingEntity {
     @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;needsFood()Z"))
     public void onAiStep(CallbackInfo ci) {
         if (this.tickCount % 10 == 0)
-            getMetabolism().peacefulWarmth();
+            getMetabolism().warmIgnoreHeat(1.0F);
     }
 
     @Inject(method = "jumpFromGround", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;causeFoodExhaustion(F)V"))

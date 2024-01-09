@@ -6,6 +6,6 @@
       "biome_tag": "metabolism:hot_biomes"
     }
   ],
-  "heat_target": 8.0,
-  "night_multiplier": 0.0
+  "heat_target": 6.0,
+  "night_multiplier": 0.5
 }

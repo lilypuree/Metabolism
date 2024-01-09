@@ -11,7 +11,8 @@ public class MetabolismConstants {
     public static final int REGEN_CYCLES = 8;
     public static final int DAMAGE_CYCLES = 4;
     public static final int ADAPTATION_TICKS = 1000;
-    public static final float DRAIN_COEFFICIENT = 0.05F;
+    public static final float DRAIN_COEFFICIENT = 0.04F;
+    public static final float CONVERSION_RATIO = 0.5F;
 
 
     public static final float ENERGY_SPRINT_JUMP = 0.1F;
@@ -24,7 +25,7 @@ public class MetabolismConstants {
     public static final float PROGRESS_CLIMB = 0.002F;
     public static final float PROGRESS_SWIM = 0.025F;
     public static final float PROGRESS_SPRINT = 0.025F;
-    public static final float ENERGY_FOOD_FLY = 0.03F; 
-    public static final float EXHAUSTION_MULTIPLIER = 1.0F; 
+    public static final float ENERGY_FOOD_FLY = 0.01F;
+    public static final float EXHAUSTION_MULTIPLIER = 1.0F;
     public static final float OTHER_FOOD_MULTIPLIER = 0.5F;
 }

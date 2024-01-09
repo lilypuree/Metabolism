@@ -1,8 +1,6 @@
 {
-  "warmth": 2.0,
   "food": 1.0,
   "hydration": 1.0,
   "modifier": {
-    "eat_when_full": true
-  }
-}
+    "stack_size": 64
+  }}

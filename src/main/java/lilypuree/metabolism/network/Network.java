@@ -33,5 +33,10 @@ public class Network {
                 .consumerMainThread(ClientHandler::handleSyncProgress)
                 .add();
 
+        channel.messageBuilder(ResultSyncMessage.class, id++)
+                .decoder(ResultSyncMessage::fromBytes)
+                .encoder(ResultSyncMessage::toBytes)
+                .consumerMainThread(ClientHandler::handleSyncResult)
+                .add();
     }
 }

@@ -63,14 +63,14 @@ public abstract class FoodDataMixin implements FoodDataDuck {
 
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
     public void onRead(CompoundTag tag, CallbackInfo ci) {
-        if (tag.contains("progress", CompoundTag.TAG_COMPOUND)) {
-            metabolism.readNBT(tag.getCompound("progress"));
+        if (tag.contains("result", CompoundTag.TAG_COMPOUND)) {
+            metabolism.readNBT(tag.getCompound("result"));
         }
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
     public void onWrite(CompoundTag tag, CallbackInfo ci) {
-        tag.put("progress", metabolism.writeNBT());
+        tag.put("result", metabolism.writeNBT());
     }
 
     @Inject(method = "addExhaustion", at = @At("HEAD"))
@@ -79,14 +79,9 @@ public abstract class FoodDataMixin implements FoodDataDuck {
         metabolism.addProgress(exhaustion * EXHAUSTION_MULTIPLIER);
     }
 
-//    @Inject(method = "setFoodLevel", at = @At("HEAD"), cancellable = true)
-//    public void onSetFood(CallbackInfo ci) {
-//        ci.cancel();
-//    }
-
     @Inject(method = "needsFood", at = @At("HEAD"), cancellable = true)
     public void onNeedsFood(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(true);
+        cir.setReturnValue(metabolism.needsFood());
     }
 
     @Override

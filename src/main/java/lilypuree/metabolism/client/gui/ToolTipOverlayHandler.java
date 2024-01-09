@@ -89,7 +89,7 @@ public class ToolTipOverlayHandler {
                 y += 10;
 
                 guiGraphics.blit(TEXTURE, offsetX, y, 18, 0, 9, 9);
-                guiGraphics.blit(TEXTURE, offsetX, y, 0, 0, 9, 9);
+                guiGraphics.blit(TEXTURE, offsetX, y, 9, 0, 9, 9);
                 renderString(guiGraphics, font, offsetX + 9, y + 1, 0.75f, metaboliteToolTip.warmthText);
             }
 
@@ -119,8 +119,15 @@ public class ToolTipOverlayHandler {
 
         MetaboliteToolTip(ItemStack itemStack, Metabolite metabolite) {
             this.itemStack = itemStack;
-            foodText = String.format("x%.1f", metabolite.food());
-            hydrationText = String.format("x%.1f", metabolite.hydration());
+            float food = metabolite.food();
+            float hydration = metabolite.hydration();
+            if (itemStack.is(Items.CAKE)) {
+                food *= 7;
+                hydration *= 7;
+            }
+            foodText = String.format("x%.1f", food);
+            hydrationText = String.format("x%.1f", hydration);
+
             if (metabolite.warmth() > 0)
                 warmthText = String.format("x%.1f over %.1fs", metabolite.getEffectiveWarmth(), metabolite.getEffectTicks() / 20.0F);
             else if (metabolite.warmth() < 0)
@@ -155,11 +162,11 @@ public class ToolTipOverlayHandler {
         boolean shouldShowTooltip = (Config.CLIENT.showToolTip() && isShiftKeyDown()) || Config.CLIENT.alwaysShowToolTip();
         if (!shouldShowTooltip)
             return false;
-
+        
         if (hoveredStack.is(Items.POTION) && PotionUtils.getPotion(hoveredStack) == Potions.WATER) {
             return true;
         } else
-            return hoveredStack.getFoodProperties(player) != null;
+            return hoveredStack.is(Items.CAKE) || hoveredStack.getFoodProperties(player) != null;
     }
 
     private static boolean isShiftKeyDown() {

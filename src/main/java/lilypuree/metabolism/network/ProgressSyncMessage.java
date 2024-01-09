@@ -1,5 +1,6 @@
 package lilypuree.metabolism.network;
 
+import lilypuree.metabolism.metabolism.MetabolismResult;
 import net.minecraft.network.FriendlyByteBuf;
 
 public record ProgressSyncMessage(float progress) {

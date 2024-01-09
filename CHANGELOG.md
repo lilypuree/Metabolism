@@ -28,3 +28,19 @@
 - AdvancedLocationCheck loot condition can now check for biome tags
 - Added GameRule to disable temperature
 - Added commands to get, set, add metabolism variables
+- 
+### [1.3.0] (Minecraft 1.20.1)
+#### Metabolization
+- Metabolization will generate the resource being drained, if there's less of it than the other.
+- Otherwise warmth will always be generated if not maxed(20)
+#### Metabolites
+- Metabolites can now specify a *modifier* object
+- Modifiers can change stack size, ability to be eaten when full, and fast eating
+- Stews and soup are stackable up to 16
+- Cakes have metabolite data and can stack up to 64
+- Cookies are always eatable
+#### Other changes
+- Nerfed some environment effects, reduced resource drain to 80%
+- Campfires give cold resistance, soul campfires give heat resistance
+- Soul sand & soil are considered cold blocks
+- Some changes to food values (more changes coming next version)

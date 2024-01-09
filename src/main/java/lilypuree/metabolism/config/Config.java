@@ -38,7 +38,7 @@ public class Config {
         public final BooleanValue preciseFeedback;
 
         public ServerConfig(Builder builder) {
-            preciseFeedback = builder.comment("enable more precise heat feedback").define("progress.heat.preciseFeedback", false);
+            preciseFeedback = builder.comment("enable more precise heat feedback").define("result.heat.preciseFeedback", false);
         }
 
         @Override

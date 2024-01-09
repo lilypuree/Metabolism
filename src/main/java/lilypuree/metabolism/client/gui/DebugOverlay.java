@@ -27,7 +27,7 @@ public class DebugOverlay extends DebugRenderOverlay {
                 "- Heat=" + String.format(FLOAT_FORMAT, metabolism.getHeat()),
                 "- Food=" + String.format(FLOAT_FORMAT, metabolism.getFood()),
                 "- Energy=" + String.format(FLOAT_FORMAT, metabolism.getHydration()),
-                "- Progress=" + String.format(FLOAT_FORMAT, metabolism.getProgress())
+                "- Progress=" + String.format(FLOAT_FORMAT, ClientHandler.progress)
         );
     }
 

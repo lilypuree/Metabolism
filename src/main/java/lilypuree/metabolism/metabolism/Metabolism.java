@@ -9,6 +9,7 @@ import lilypuree.metabolism.metabolite.Metabolite;
 import lilypuree.metabolism.network.ClientSyncMessage;
 import lilypuree.metabolism.network.Network;
 import lilypuree.metabolism.network.ProgressSyncMessage;
+import lilypuree.metabolism.network.ResultSyncMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,7 +46,6 @@ public class Metabolism {
     private float lastSentHydration;
     private float lastSentFood;
     private float lastSentProgress;
-
     //TICKING
     private int baseTick = 0;
     private int envCounter = 0;
@@ -102,9 +102,8 @@ public class Metabolism {
             regenHealth(player);
             regenCounter = 0;
         }
-        metabolismEffect(player);
-
-        syncToClient((ServerPlayer) player);
+        MetabolismResult result = metabolismEffect((ServerPlayer) player);
+        syncToClient((ServerPlayer) player, result);
     }
 
     private void regenHealth(Player player) {
@@ -167,24 +166,32 @@ public class Metabolism {
         }
     }
 
-    private void metabolismEffect(Player player) {
+    private MetabolismResult metabolismEffect(ServerPlayer player) {
         if (player.hasEffect(Registration.METABOLISM_EFFECT.get())) {
             int amp = player.getEffect(Registration.METABOLISM_EFFECT.get()).getAmplifier();
             progress += ((float) amp + 1) / BASE_TICK_COUNT / METABOLISM_CYCLES;
         }
-
         if (progress >= 1.0F) {
-            // Metabolise food and hydration to warmth
-            if (food > 0 && hydration > 0 && warmth < maxWarmth - Math.abs(heat)) {
+            progress -= 1.0F;
+            if (heat > 0 && food > hydration) {
+                consumeFood(1.0F);
+                setHydration(hydration + CONVERSION_RATIO);
+                return MetabolismResult.HYDRATION;
+            } else if (heat < 0 && food < hydration) {
+                consumeHydration(1.0F);
+                setFood(food + CONVERSION_RATIO);
+                return MetabolismResult.FOOD;
+            } else if (warmth < maxWarmth && food > 0 && hydration > 0) {
                 consumeFood(1.0F);
                 consumeHydration(1.0F);
-                warm(1.0F);
+                warmIgnoreHeat(1.0F);
+                return MetabolismResult.WARMING;
             }
-            progress -= 1.0F;
         }
+        return MetabolismResult.NONE;
     }
 
-    private void syncToClient(ServerPlayer player) {
+    private void syncToClient(ServerPlayer player, MetabolismResult result) {
         boolean changed = warmth != lastSentWarmth || heat != lastSentHeat || food != lastSentFood || hydration != lastSentHydration;
         if (changed) {
             ClientSyncMessage msg = new ClientSyncMessage(heat, warmth, food, hydration);
@@ -200,6 +207,9 @@ public class Metabolism {
             Network.channel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
             lastSentProgress = progress;
         }
+
+        if (result != MetabolismResult.NONE)
+            Network.channel.sendTo(new ResultSyncMessage(result), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public void addProgress(float amount) {
@@ -215,8 +225,8 @@ public class Metabolism {
     }
 
     public void eat(LivingEntity entity, Metabolite metabolite) {
-        this.food += metabolite.food();
-        this.hydration += metabolite.hydration();
+        setFood(food + metabolite.food());
+        setHydration(hydration + metabolite.hydration());
         if (metabolite.warmth() > 0 && entity != null) {
             entity.addEffect(new MetabolismEffect.Instance(metabolite.getEffectTicks(), metabolite.amplifier()));
         } else if (metabolite.warmth() < 0) {
@@ -224,17 +234,17 @@ public class Metabolism {
         }
     }
 
-    public void peacefulWarmth() {
-        if (heat > 0)
-            this.heat = Math.max(heat - 1, 0);
-        else if (heat < 0)
-            this.heat = Math.min(heat + 1, 0);
-
-        this.warm(1.0F);
-    }
-
     public void warm(float amount) {
         setWarmth(warmth + amount);
+    }
+
+    public void warmIgnoreHeat(float amount) {
+        warmth = Math.min(MAX_WARMTH, warmth + amount);
+        if (heat > 0) {
+            heat = Math.min(heat, MAX_WARMTH - warmth);
+        } else if (heat < 0) {
+            heat = Math.max(heat, -MAX_WARMTH + warmth);
+        }
     }
 
     public float getMaxWarmth() {
@@ -247,10 +257,6 @@ public class Metabolism {
 
     public float getHeat() {
         return heat;
-    }
-
-    public float getProgress() {
-        return progress;
     }
 
     public float getFood() {
@@ -269,10 +275,6 @@ public class Metabolism {
     public void setHeat(float heat) {
         this.heat = Mth.clamp(heat, -maxWarmth, maxWarmth);
         setWarmth(warmth);
-    }
-
-    public void setProgress(float progress) {
-        this.progress = progress;
     }
 
     public void setFood(float food) {
@@ -312,6 +314,10 @@ public class Metabolism {
         return foodAllowed && hydrationAllowed;
     }
 
+    public boolean needsFood() {
+        return food < MAX_FOOD || hydration < MAX_FOOD;
+    }
+
     public CompoundTag writeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putFloat("maxWarmth", maxWarmth);
@@ -319,7 +325,7 @@ public class Metabolism {
         nbt.putFloat("heat", heat);
         nbt.putFloat("food", food);
         nbt.putFloat("hydration", hydration);
-        nbt.putFloat("progress", progress);
+        nbt.putFloat("result", progress);
         return nbt;
     }
 
@@ -329,7 +335,7 @@ public class Metabolism {
         heat = nbt.getFloat("heat");
         food = nbt.getFloat("food");
         hydration = nbt.getFloat("hydration");
-        progress = nbt.getFloat("progress");
+        progress = nbt.getFloat("result");
     }
 
     public void syncOnClient(ClientSyncMessage msg) {
@@ -338,9 +344,4 @@ public class Metabolism {
         hydration = msg.hydration;
         food = msg.food;
     }
-
-    public void syncProgress(ProgressSyncMessage msg) {
-        progress = msg.progress();
-    }
-
 }

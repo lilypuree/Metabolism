@@ -6,6 +6,7 @@ import lilypuree.metabolism.MetabolismMod;
 import lilypuree.metabolism.client.ClientHandler;
 import lilypuree.metabolism.config.Config;
 import lilypuree.metabolism.metabolism.Metabolism;
+import lilypuree.metabolism.metabolism.MetabolismResult;
 import lilypuree.metabolism.util.Anchor;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -23,12 +24,10 @@ public class MetabolismDisplayHandler extends Screen {
     public static final MetabolismDisplayHandler INSTANCE = new MetabolismDisplayHandler(Component.empty());
     private static final ResourceLocation TEXTURE = new ResourceLocation(MetabolismMod.MOD_ID, "textures/gui/hud.png");
 
-    private float lastWarmth = Float.MAX_VALUE;
-    private float lastProgress = -1;
     private int animationFrame = 0;
     private float animationFrameTime = 0.0F;
-    private boolean displayWarmth = false;
-    private long warmthDisplayTime = 0L;
+    private MetabolismResult resultDisplay = MetabolismResult.NONE;
+    private long resultDisplayTime = 0L;
     private long heatDisplayTime = 0L;
 
 
@@ -63,22 +62,21 @@ public class MetabolismDisplayHandler extends Screen {
         renderBar(graphics, posX + 13, posY + 11, 196, Mth.floor(metabolism.getHydration()));
 
 
-        float progress = metabolism.getProgress();
-        if (lastProgress > progress && lastWarmth < metabolism.getWarmth()) {
-            displayWarmth = true;
-            warmthDisplayTime = Util.getMillis();
+        if (ClientHandler.result != MetabolismResult.NONE) {
+            resultDisplay = ClientHandler.result;
+            resultDisplayTime = Util.getMillis();
+            ClientHandler.result = MetabolismResult.NONE;
         }
-        if (displayWarmth) {
+        if (resultDisplay != MetabolismResult.NONE) {
             graphics.blit(TEXTURE, posX + 1, posY + 3, 207, 3, 23, 62); //entire arrow
-            graphics.blit(TEXTURE, posX + 8, posY + 1, 0, 0, 9, 9); //warmth icon
-            displayWarmth = (Util.getMillis() - warmthDisplayTime) < 1000L;
-        } else if (progress > 0) {
-            int length = Mth.ceil(progress * 56);
+            renderIcon(graphics, posX + 8, posY + 1, resultDisplay);
+            if (Util.getMillis() - resultDisplayTime > 1000L)
+                resultDisplay = MetabolismResult.NONE;
+        } else if (ClientHandler.progress > 0) {
+            int length = Mth.ceil(ClientHandler.progress * 56);
             graphics.blit(TEXTURE, posX + 1, posY + 64, 207, 64, 23, 1); //starting tip
             graphics.blit(TEXTURE, posX + 1, posY + 64 - length, 207, 8, 23, length); //bars
         }
-        lastProgress = progress;
-        lastWarmth = metabolism.getWarmth();
 
         float heat = metabolism.getHeat();
         if (heat != 0) {
@@ -89,10 +87,10 @@ public class MetabolismDisplayHandler extends Screen {
             }
             int animationU = animationFrame * 7;
             if (heat > 0) {
-                graphics.blit(TEXTURE, posX + 8, posY + 71, 0, 9, 9, 9); //heat icon
+                renderIcon(graphics, posX + 8, posY + 71, MetabolismResult.HEATING);
                 graphics.blit(TEXTURE, posX + 17, posY + 64, animationU, 64, 7, 14); //heat arrows
             } else {
-                graphics.blit(TEXTURE, posX + 8, posY + 71, 0, 18, 9, 9); //heat icon
+                renderIcon(graphics, posX + 8, posY + 71, MetabolismResult.COOLING);
                 graphics.blit(TEXTURE, posX + 1, posY + 64, animationU, 48, 7, 14); //heat arrows
             }
         } else {
@@ -117,6 +115,16 @@ public class MetabolismDisplayHandler extends Screen {
             int vOffset = (flag - 1) * 6;
             graphics.blit(TEXTURE, posX, posY, uOffset, vOffset, 9, 6);
             posY -= 5;
+        }
+    }
+
+    private void renderIcon(GuiGraphics graphics, int posX, int posY, MetabolismResult result) {
+        switch (result) {
+            case WARMING -> graphics.blit(TEXTURE, posX, posY, 0, 0, 9, 9); //yellow orb
+            case HEATING -> graphics.blit(TEXTURE, posX, posY, 0, 9, 9, 9); //red orb
+            case COOLING -> graphics.blit(TEXTURE, posX, posY, 0, 18, 9, 9); //blue orb
+            case FOOD -> graphics.blit(TEXTURE, posX, posY, 18, 9, 9, 9);
+            case HYDRATION -> graphics.blit(TEXTURE, posX, posY, 27, 9, 9, 9);
         }
     }
 
