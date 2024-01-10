@@ -55,9 +55,9 @@ public class MetabolismDisplayHandler extends Screen {
         int posY = anchor.getY(mc.getWindow().getGuiScaledHeight(), 81, 5) + Config.CLIENT.metabolismOverlayOffsetY();
 
         graphics.blit(TEXTURE, posX, posY, 231, 0, 25, 81); //background
-        graphics.blit(TEXTURE, posX + 3, posY + 60, 18, 9, 9, 9); //food icon
-        graphics.blit(TEXTURE, posX + 13, posY + 60, 27, 9, 9, 9); //hydration icon
-
+        renderIcon(graphics, posX + 3, posY + 60, MetabolismResult.FOOD);
+        renderIcon(graphics, posX + 13, posY + 60, MetabolismResult.HYDRATION);
+        
         renderBar(graphics, posX + 3, posY + 11, 186, Mth.floor(metabolism.getFood()));
         renderBar(graphics, posX + 13, posY + 11, 196, Mth.floor(metabolism.getHydration()));
 
@@ -118,13 +118,14 @@ public class MetabolismDisplayHandler extends Screen {
         }
     }
 
-    private void renderIcon(GuiGraphics graphics, int posX, int posY, MetabolismResult result) {
+    public static void renderIcon(GuiGraphics graphics, int posX, int posY, MetabolismResult result) {
         switch (result) {
-            case WARMING -> graphics.blit(TEXTURE, posX, posY, 0, 0, 9, 9); //yellow orb
-            case HEATING -> graphics.blit(TEXTURE, posX, posY, 0, 9, 9, 9); //red orb
-            case COOLING -> graphics.blit(TEXTURE, posX, posY, 0, 18, 9, 9); //blue orb
-            case FOOD -> graphics.blit(TEXTURE, posX, posY, 18, 9, 9, 9);
-            case HYDRATION -> graphics.blit(TEXTURE, posX, posY, 27, 9, 9, 9);
+            case NONE -> graphics.blit(TEXTURE, posX, posY, 9, 0, 9, 9);    //container
+            case WARMING -> graphics.blit(TEXTURE, posX, posY, 9, 9, 9, 9); //yellow orb
+            case HEATING -> graphics.blit(TEXTURE, posX, posY, 9, 18, 9, 9); //red orb
+            case COOLING -> graphics.blit(TEXTURE, posX, posY, 9, 27, 9, 9); //blue orb
+            case FOOD -> graphics.blit(TEXTURE, posX, posY, 0, 0, 9, 9);
+            case HYDRATION -> graphics.blit(TEXTURE, posX, posY, 0, 9, 9, 9);
         }
     }
 

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import lilypuree.metabolism.MetabolismMod;
 import lilypuree.metabolism.config.Config;
+import lilypuree.metabolism.metabolism.MetabolismResult;
 import lilypuree.metabolism.metabolite.Metabolite;
 import lilypuree.metabolism.metabolite.Metabolites;
 import net.minecraft.client.Minecraft;
@@ -31,9 +32,7 @@ public class ToolTipOverlayHandler {
     public static void register(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(MetaboliteToolTip.class, MetaboliteToolTipRenderer::new);
     }
-
-    private static final ResourceLocation TEXTURE = new ResourceLocation(MetabolismMod.MOD_ID, "textures/gui/hud.png");
-
+    
     public static class MetaboliteToolTipRenderer implements ClientTooltipComponent {
         MetaboliteToolTip metaboliteToolTip;
 
@@ -76,20 +75,20 @@ public class ToolTipOverlayHandler {
 
             int offsetX = x;
 
-            guiGraphics.blit(TEXTURE, offsetX, y, 18, 9, 9, 9);
+            MetabolismDisplayHandler.renderIcon(guiGraphics, offsetX, y, MetabolismResult.FOOD);
             renderString(guiGraphics, font, offsetX + 9, y + 1, 0.75f, metaboliteToolTip.foodText);
 
             offsetX += 18 + font.width(metaboliteToolTip.foodText);
 
-            guiGraphics.blit(TEXTURE, offsetX, y, 27, 9, 9, 9);
+            MetabolismDisplayHandler.renderIcon(guiGraphics, offsetX, y, MetabolismResult.HYDRATION);
             renderString(guiGraphics, font, offsetX + 9, y + 1, 0.75f, metaboliteToolTip.hydrationText);
 
             if (metaboliteToolTip.warmthText != null) {
                 offsetX = x;
                 y += 10;
-
-                guiGraphics.blit(TEXTURE, offsetX, y, 18, 0, 9, 9);
-                guiGraphics.blit(TEXTURE, offsetX, y, 9, 0, 9, 9);
+                
+                MetabolismDisplayHandler.renderIcon(guiGraphics, offsetX, y, MetabolismResult.NONE);
+                MetabolismDisplayHandler.renderIcon(guiGraphics, offsetX, y, MetabolismResult.WARMING);
                 renderString(guiGraphics, font, offsetX + 9, y + 1, 0.75f, metaboliteToolTip.warmthText);
             }
 

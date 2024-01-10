@@ -44,3 +44,7 @@
 - Campfires give cold resistance, soul campfires give heat resistance
 - Soul sand & soil are considered cold blocks
 - Some changes to food values (more changes coming next version)
+
+### [1.3.1] (Minecraft 1.20.1)
+- Fixed metabolization not generating warmth properly
+- Changed display of warmth bar to flicker when regenerating

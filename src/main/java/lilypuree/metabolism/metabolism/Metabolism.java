@@ -108,7 +108,7 @@ public class Metabolism {
 
     private void regenHealth(Player player) {
         boolean regen = player.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
-        if (regen && player.isHurt() && warmth > 0) {
+        if (regen && player.isHurt() && warmth >= 1.0F) {
             player.heal(1.0F);
             warmth = Math.max(0.0F, warmth - 1.0F);
         }
@@ -173,7 +173,12 @@ public class Metabolism {
         }
         if (progress >= 1.0F) {
             progress -= 1.0F;
-            if (heat > 0 && food > hydration) {
+            if (warmth < maxWarmth - Math.abs(heat) && food > 0 && hydration > 0) {
+                consumeFood(1.0F);
+                consumeHydration(1.0F);
+                warmIgnoreHeat(1.0F);
+                return MetabolismResult.WARMING;
+            } else if (heat > 0 && food > hydration) {
                 consumeFood(1.0F);
                 setHydration(hydration + CONVERSION_RATIO);
                 return MetabolismResult.HYDRATION;
