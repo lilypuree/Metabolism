@@ -20,6 +20,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,7 +56,7 @@ public class Environment extends SimpleJsonResourceReloadListener {
         ImmutableSet.Builder<EnvironmentEffect> locals = ImmutableSet.builder();
         ImmutableSet.Builder<EnvironmentEffect> ranged = ImmutableSet.builder();
         map.entrySet().stream()
-                .filter(entry -> entry.getKey().getNamespace().equals(MetabolismMod.MOD_ID))
+                .filter(entry -> ModList.get().isLoaded(entry.getKey().getNamespace()))
                 .forEach(entry -> {
                     try {
                         EnvironmentEffect effect = EnvironmentEffect.deserialize(entry.getKey(), entry.getValue(), resourceManager);

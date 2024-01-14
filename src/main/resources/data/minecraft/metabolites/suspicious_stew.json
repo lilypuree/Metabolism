@@ -1,7 +1,7 @@
 {
-  "warmth": 10.0,
-  "food": 8.0,
-  "hydration": 8.0,
+  "warmth": 6.0,
+  "food": 6.0,
+  "hydration": 6.0,
   "modifier": {
     "stack_size": 16
   }

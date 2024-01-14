@@ -128,9 +128,9 @@ public class ToolTipOverlayHandler {
             hydrationText = String.format("x%.1f", hydration);
 
             if (metabolite.warmth() > 0)
-                warmthText = String.format("x%.1f over %.1fs", metabolite.getEffectiveWarmth(), metabolite.getEffectTicks() / 20.0F);
+                warmthText = String.format("x%.1f over %.1fs", metabolite.warmth(), metabolite.getEffectTicks() / 20.0F);
             else if (metabolite.warmth() < 0)
-                warmthText = String.format("x%.1f", metabolite.getEffectiveWarmth());
+                warmthText = String.format("x%.1f", metabolite.warmth());
 
         }
     }

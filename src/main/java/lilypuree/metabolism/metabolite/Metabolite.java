@@ -22,17 +22,13 @@ public record Metabolite(float food, float hydration, float warmth, int amplifie
 
 
     public static Metabolite createVanilla(float nutrition, float saturationMod) {
-        float healthIncrease = nutrition * saturationMod * 8.0F / FoodConstants.EXHAUSTION_HEAL;
-        float multiplier = MetabolismConstants.OTHER_FOOD_MULTIPLIER;
-        return new Metabolite(nutrition * multiplier, nutrition * multiplier, healthIncrease, 1, null);
+        float effectiveQuality = nutrition + nutrition * saturationMod * 2.0F;
+        int size = Mth.floor(effectiveQuality * MetabolismConstants.OTHER_FOOD_MULTIPLIER);
+        return new Metabolite(size, size, size, 0, null);
     }
 
     public int getEffectTicks() {
-        return Mth.floor(warmth * MetabolismConstants.METABOLISM_CYCLES * MetabolismConstants.BASE_TICK_COUNT);
-    }
-
-    public float getEffectiveWarmth() {
-        return warmth * (amplifier + 1);
+        return Mth.ceil(warmth / MetabolismConstants.metabolismSpeed(amplifier));
     }
 
     public static record Modifier(int stackSize, boolean eatWhenFull, boolean fastEating) {

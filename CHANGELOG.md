@@ -48,3 +48,10 @@
 ### [1.3.1] (Minecraft 1.20.1)
 - Fixed metabolization not generating warmth properly
 - Changed display of warmth bar to flicker when regenerating
+
+### [1.4.0] (Minecraft 1.20.1)
+- Changed values for all food items
+- Metabolism effect amplifier works differently
+- Metabolization reduces heat only when effect level is more than 0
+- Metabolites for other mods are not OP anymore
+- AdvancedLocationCheck can omit the type variable

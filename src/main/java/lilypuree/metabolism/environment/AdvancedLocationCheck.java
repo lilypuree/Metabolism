@@ -56,11 +56,16 @@ public class AdvancedLocationCheck implements LootItemCondition {
         BlockPos pos = BlockPos.containing(origin.x, origin.y, origin.z);
 
         boolean matchesBiomeTag = (biomeTag == null) || level.getBiome(pos).is(biomeTag);
+        
+        return matchesBiomeTag && matchesType(level, pos);
+    }
 
-        if (matchesBiomeTag && hasNoBlocksAbove(level, pos)) {
+    public boolean matchesType(ServerLevel level, BlockPos pos) {
+        if (type == Type.NONE)
+            return true;
+        else if (hasNoBlocksAbove(level, pos)) {
             Holder<Biome> biome = level.getBiome(pos);
             Biome.Precipitation precipitation = biome.value().getPrecipitationAt(pos);
-
             switch (type) {
                 case EXPOSED -> {
                     return true;
@@ -104,7 +109,7 @@ public class AdvancedLocationCheck implements LootItemCondition {
     }
 
     public enum Type {
-        EXPOSED("exposed"), RAINY("rainy"), SNOWY("snowy");
+        NONE(""), EXPOSED("exposed"), RAINY("rainy"), SNOWY("snowy");
 
         private final String name;
 
@@ -122,11 +127,11 @@ public class AdvancedLocationCheck implements LootItemCondition {
                 Optional<Type> locationType = Arrays.stream(values()).filter(type -> type.name.equals(name)).findAny();
                 if (locationType.isEmpty()) {
                     MetabolismMod.LOGGER.warn("invalid location type " + name);
-                    return null;
+                    return NONE;
                 } else
                     return locationType.get();
             }
-            return null;
+            return NONE;
         }
     }
 }

@@ -116,7 +116,7 @@ public class Metabolism {
 
     private void causeDamage(Player player) {
         if (heat > 0) {
-            if (hydration > 0)
+            if (hydration > calculateDrain())
                 consumeHydration(calculateDrain());
             else {
                 consumeFood(1.0F);
@@ -124,7 +124,7 @@ public class Metabolism {
                     player.hurt(player.damageSources().starve(), 1.0F);
             }
         } else if (heat < 0) {
-            if (food > 0)
+            if (food > calculateDrain())
                 consumeFood(calculateDrain());
             else {
                 consumeHydration(1.0F);
@@ -167,26 +167,27 @@ public class Metabolism {
     }
 
     private MetabolismResult metabolismEffect(ServerPlayer player) {
+        int effectLevel = 0;
         if (player.hasEffect(Registration.METABOLISM_EFFECT.get())) {
-            int amp = player.getEffect(Registration.METABOLISM_EFFECT.get()).getAmplifier();
-            progress += ((float) amp + 1) / BASE_TICK_COUNT / METABOLISM_CYCLES;
+            effectLevel = player.getEffect(Registration.METABOLISM_EFFECT.get()).getAmplifier();
+            progress += MetabolismConstants.metabolismSpeed(effectLevel);
         }
         if (progress >= 1.0F) {
             progress -= 1.0F;
-            if (warmth < maxWarmth - Math.abs(heat) && food > 0 && hydration > 0) {
+            if (warmth < maxWarmth - Math.abs(heat) && food > 1.0F && hydration > 1.0F) {
                 consumeFood(1.0F);
                 consumeHydration(1.0F);
                 warmIgnoreHeat(1.0F);
                 return MetabolismResult.WARMING;
-            } else if (heat > 0 && food > hydration) {
+            } else if (heat > 0 && food > hydration && food > 1.0F) {
                 consumeFood(1.0F);
                 setHydration(hydration + CONVERSION_RATIO);
                 return MetabolismResult.HYDRATION;
-            } else if (heat < 0 && food < hydration) {
+            } else if (heat < 0 && food < hydration && hydration > 1.0F) {
                 consumeHydration(1.0F);
                 setFood(food + CONVERSION_RATIO);
                 return MetabolismResult.FOOD;
-            } else if (warmth < maxWarmth && food > 0 && hydration > 0) {
+            } else if (effectLevel > 0 && warmth < maxWarmth && food > 1.0F && hydration > 1.0F) {
                 consumeFood(1.0F);
                 consumeHydration(1.0F);
                 warmIgnoreHeat(1.0F);
