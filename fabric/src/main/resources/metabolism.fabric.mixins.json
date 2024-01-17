@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "lilypuree.metabolism.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "GuiMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "FabricPlayerMixin"
+  ]
+}

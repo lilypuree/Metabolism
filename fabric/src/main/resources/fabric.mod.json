@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "sources": "https://github.com/lilypuree/Metabolism"
+  },
+  "license": "${license}",
+  "icon" : "logo.png",
+  "environment": "*",
+  "accessWidener": "metabolism.accesswidener",
+  "entrypoints": {
+    "main": [
+      "lilypuree.metabolism.MetabolismMod"
+    ],
+    "client": [
+      "lilypuree.metabolism.ClientInitializer"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15",
+    "fabric": "*",
+    "minecraft": ">=1.20.1",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
