@@ -3,6 +3,8 @@ env:
   MOD_NAME: Metabolism
   CURSEFORGE_ID: 953740
   MODRINTH_ID: dd5hwRqg
+  forge: Forge
+  fabric: Fabric
 on:
   workflow_dispatch:
 
@@ -20,8 +22,8 @@ jobs:
     strategy:
       matrix:
         website: [ modrinth, curseforge ]
-        loader: [ Forge, Fabric ]
-    name: ${{ matrix.website }} (${{ matrix.loader }})
+        loader: [ forge, fabric ]
+    name: ${{ matrix.website }} (${{ env.${{ matrix.loader }} }})
     
     steps:
       - uses: actions/checkout@v3
@@ -59,10 +61,10 @@ jobs:
           java: Java 17
           name: >
             [
-            ${{ matrix.loader }} ${{ env.mc_version }}
+            ${{ env.${{ matrix.loader }} }} ${{ env.mc_version }}
             ]
             v${{ env.mod_version }}  
-          version: ${{ env.mod_version }}+${{ env.loader_name }}
+          version: ${{ env.mod_version }}+${{ matrix.loader }}
           version-type: release
           changelog-file: CHANGELOG.*
           
@@ -78,9 +80,9 @@ jobs:
           java: Java 17
           name: >
             [
-            ${{ matrix.loader }} ${{ env.mc_version }}
+            ${{ env.${{ matrix.loader }} }} ${{ env.mc_version }}
             ]
             v${{ env.mod_version }}           
-          version: ${{ env.mod_version }}+${{ env.loader_name }}
+          version: ${{ env.mod_version }}+${{ matrix.loader }}
           version-type: release
           changelog-file: CHANGELOG.*
