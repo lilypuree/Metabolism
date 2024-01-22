@@ -23,7 +23,7 @@ jobs:
       matrix:
         website: [ modrinth, curseforge ]
         loader: [ forge, fabric ]
-    name: ${{ matrix.website }} (${{ env.${{ matrix.loader }} }})
+    name: ${{ matrix.website }} (${{ env[matrix.loader] }})
     
     steps:
       - uses: actions/checkout@v3
@@ -61,7 +61,7 @@ jobs:
           java: Java 17
           name: >
             [
-            ${{ env.${{ matrix.loader }} }} ${{ env.mc_version }}
+            ${{ env[matrix.loader] }} ${{ env.mc_version }}
             ]
             v${{ env.mod_version }}  
           version: ${{ env.mod_version }}+${{ matrix.loader }}
@@ -80,7 +80,7 @@ jobs:
           java: Java 17
           name: >
             [
-            ${{ env.${{ matrix.loader }} }} ${{ env.mc_version }}
+            ${{ env[matrix.loader] }} ${{ env.mc_version }}
             ]
             v${{ env.mod_version }}           
           version: ${{ env.mod_version }}+${{ matrix.loader }}
