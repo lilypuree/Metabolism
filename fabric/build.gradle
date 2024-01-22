@@ -7,7 +7,7 @@ plugins {
     id 'net.darkhax.curseforgegradle' version "1.+"
 }
 base {
-    archivesName = "${mod_name}-fabric-${minecraft_version}"
+    archivesName = "${mod_name}-Fabric-${minecraft_version}"
 }
 repositories {
     maven { url "https://maven.shedaniel.me/" }
