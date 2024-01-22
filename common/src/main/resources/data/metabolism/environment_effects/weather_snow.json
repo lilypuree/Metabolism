@@ -1,0 +1,10 @@
+{
+  "conditions": [
+    {
+      "condition": "metabolism:advanced_location_check",
+      "type": "snowy"
+    }
+  ],
+  "is_additive": true,
+  "heat_target": -6.0
+}

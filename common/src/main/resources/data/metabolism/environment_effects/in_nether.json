@@ -1,0 +1,11 @@
+{
+  "conditions": [
+    {
+      "condition": "minecraft:location_check",
+      "predicate": {
+        "dimension": "minecraft:the_nether"
+      }
+    }
+  ],
+  "heat_target": 8.0
+}

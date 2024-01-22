@@ -1,0 +1,11 @@
+{
+  "conditions": [
+    {
+      "condition": "metabolism:advanced_location_check",
+      "type": "exposed"
+    }
+  ],
+  "is_additive": true,
+  "night_multiplier": 0,
+  "warmth_effect": 0.2
+}

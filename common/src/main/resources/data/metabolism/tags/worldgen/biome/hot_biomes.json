@@ -1,0 +1,21 @@
+{
+  "values": [
+    "minecraft:desert",
+    "minecraft:badlands",
+    "minecraft:eroded_badlands",
+    "#minecraft:is_jungle",
+    "#forge:is_desert",
+    {
+      "id": "#c:jungle",
+      "require": false
+    },
+    {
+      "id": "#c:desert",
+      "require": false
+    },
+    {
+      "id": "#forge:is_desert",
+      "require": false
+    }
+  ]
+}

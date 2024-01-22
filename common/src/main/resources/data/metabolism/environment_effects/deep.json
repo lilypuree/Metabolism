@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "condition": "minecraft:location_check",
+      "predicate": {
+        "dimension": "minecraft:overworld",
+        "position": {
+          "y": {
+            "max" : 0,
+            "min" : -25
+          }
+        }
+      }
+    },
+    {
+      "condition": "inverted",
+      "term": {
+        "condition": "location_check",
+        "predicate": {
+          "biome": "minecraft:deep_dark"
+        }
+      }
+    }
+  ],
+  "heat_target": 4.0
+}

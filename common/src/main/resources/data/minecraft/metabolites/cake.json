@@ -1,0 +1,6 @@
+{
+  "food": 1.0,
+  "hydration": 1.0,
+  "modifier": {
+    "stack_size": 64
+  }}
