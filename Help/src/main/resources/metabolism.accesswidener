@@ -1,8 +1,0 @@
-accessWidener v1 named
-
-accessible field net/minecraft/client/gui/Gui healthBlinkTime J
-
-accessible field net/minecraft/world/effect/MobEffectInstance duration I
-accessible field net/minecraft/world/effect/MobEffectInstance hiddenEffect Lnet/minecraft/world/effect/MobEffectInstance;
-accessible field net/minecraft/world/effect/MobEffectInstance amplifier I
-extendable method net/minecraft/world/effect/MobEffectInstance tickDownDuration ()I
