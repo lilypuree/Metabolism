@@ -1,8 +1,0 @@
-{
-  "warmth": 1.0,
-  "food": 1.0,
-  "hydration": 3.0,
-  "modifier": {
-    "fast_eating": true
-  }
-}

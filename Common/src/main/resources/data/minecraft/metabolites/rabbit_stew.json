@@ -1,9 +1,0 @@
-{
-  "warmth": 10.0,
-  "amplifier": 1,
-  "food": 12.0,
-  "hydration": 12.0,
-  "modifier": {
-    "stack_size": 16
-  }
-}
