@@ -2,7 +2,11 @@ package lilypuree.metabolism.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import lilypuree.metabolism.client.ClientHandler;
+import lilypuree.metabolism.client.gui.MetabolismDisplayHandler;
 import lilypuree.metabolism.client.gui.WarmthDisplayHandler;
+import lilypuree.metabolism.config.Config;
+import lilypuree.metabolism.core.Metabolism;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -36,15 +40,22 @@ public abstract class GuiMixin {
 
     @Redirect(method = "renderPlayerHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;getVehicleMaxHearts(Lnet/minecraft/world/entity/LivingEntity;)I"))
     public int onGetVehicleHealth(Gui gui, LivingEntity entity) {
-        return 0;
+        return 20;
     }
 
     @Inject(method = "renderPlayerHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMaxAirSupply()I"))
-    public void onRenderPlayerHealth(GuiGraphics graphics, CallbackInfo ci, @Local(index = 22) LocalIntRef x, @Local(index = 18) LocalIntRef rightHeight) {
+    public void onRenderPlayerHealth(GuiGraphics graphics, CallbackInfo ci, @Local(index = 22) LocalIntRef x, @Local(index = 18) LocalIntRef rightY) {
         x.set(this.getVehicleMaxHearts(this.getPlayerVehicleWithHealth()));
+        if (x.get() == 0) {
+            int rightHeight = this.screenHeight - rightY.get() - 10;
+            rightHeight = WarmthDisplayHandler.INSTANCE.renderWarmth(this.minecraft, this.screenWidth, this.screenHeight, graphics, rightHeight);
+            rightY.set(screenHeight - rightHeight - 10);
+        }
 
-        int i = WarmthDisplayHandler.INSTANCE.renderHealth(this.minecraft, this.screenWidth, this.screenHeight, graphics, rightHeight.get());
-        rightHeight.set(i);
+        if (Config.CLIENT.metabolismOverlayShow()) {
+            Metabolism metabolism = ClientHandler.getClientMetabolism(this.minecraft);
+            MetabolismDisplayHandler.INSTANCE.render(graphics, this.minecraft, metabolism);
+        }
     }
 
 

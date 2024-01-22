@@ -4,6 +4,9 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id "com.modrinth.minotaur" version "2.+"
+    id 'net.darkhax.curseforgegradle' version '1.+'
+
 }
 base {
     archivesName = "${mod_name}-forge-${minecraft_version}"
@@ -86,7 +89,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":common")
-    compileOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}:api")
+    compileOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_forge_version}:api")
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 }
 
@@ -119,4 +122,31 @@ publishing {
             url "file://" + System.getenv("local_maven")
         }
     }
+}
+
+modrinth {
+    debugMode = true
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "${mod_id}" // This can be the project ID or the slug. Either will work!
+    versionName = archivesBaseName + "-" + version
+    versionType = "release" // This is the default -- can also be `beta` or `alpha`
+    uploadFile = jar // With Loom, this MUST be set to `remapJar` instead of `jar`!
+    changelog = rootProject.file('CHANGELOG.md').text
+    gameVersions = ["1.20.1"] // Must be an array, even with only one version
+    dependencies { // A special DSL for creating dependencies
+        
+    }
+}
+
+task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+    debugMode = true
+
+    description = 'publishes the forge build to CurseForge.'
+
+    apiToken = System.getenv("CURSEFORGE_TOKEN")
+
+    def mainFile = upload(953740, jar)
+    mainFile.changelog = rootProject.file('CHANGELOG.md')
+    mainFile.changelogType = "markdown"
+    mainFile.releaseType = "release"
 }

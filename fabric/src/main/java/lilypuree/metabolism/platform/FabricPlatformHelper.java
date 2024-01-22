@@ -65,6 +65,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public <I> Supplier<I> register(Registry<I> registry, String name, Supplier<? extends I> sup) {
-        return () -> Registry.register(registry, new ResourceLocation(Constants.MOD_ID, name), sup.get());
+        I object = Registry.register(registry, new ResourceLocation(Constants.MOD_ID, name), sup.get());
+        return () -> object;
     }
 }

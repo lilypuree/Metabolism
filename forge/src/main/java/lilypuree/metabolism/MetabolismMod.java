@@ -13,6 +13,7 @@ import lilypuree.metabolism.registration.MetabolismGameRules;
 import lilypuree.metabolism.registration.Registration;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,6 +29,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkDirection;
 
 @Mod(Constants.MOD_ID)
@@ -48,10 +50,12 @@ public class MetabolismMod {
         modbus.addListener(this::reloadConfig);
         modbus.addListener(this::clientInit);
         modbus.addListener(this::commonSetup);
-        modbus.addListener(ClientEventHandler::onToolTipRegister);
         forgebus.addListener(this::addListener);
         forgebus.addListener(this::syncMetabolites);
         forgebus.addListener(this::registerCommands);
+
+        if (FMLEnvironment.dist == Dist.CLIENT)
+            modbus.addListener(ClientEventHandler::onToolTipRegister);
     }
 
     private void clientInit(final FMLClientSetupEvent event) {

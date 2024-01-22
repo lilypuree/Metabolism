@@ -3,11 +3,15 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'fabric-loom' version '1.2-SNAPSHOT'
+    id "com.modrinth.minotaur" version "2.+"
+    id 'net.darkhax.curseforgegradle' version "1.+"
 }
 base {
     archivesName = "${mod_name}-fabric-${minecraft_version}"
 }
 repositories {
+    maven { url "https://maven.shedaniel.me/" }
+    maven { url "https://maven.ryanliptak.com/" }
     maven {
         url = "https://api.modrinth.com/maven"
     }
@@ -23,7 +27,10 @@ dependencies {
     include(modImplementation "maven.modrinth:midnightlib:${midnightlib_version}")
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:12.0.613"
+    modCompileOnly("squeek.appleskin:appleskin-fabric:${appleskin_fabric_version}:api") {
+        transitive = false
+    }
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":common")
 }
@@ -77,4 +84,34 @@ publishing {
             url "file://" + System.getenv("local_maven")
         }
     }
+}
+
+modrinth {
+    debugMode = true
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "${mod_id}" // This can be the project ID or the slug. Either will work!
+    versionName = archivesBaseName + "-" + version
+    versionType = "release" // This is the default -- can also be `beta` or `alpha`
+    uploadFile = remapJar
+    changelog = rootProject.file('CHANGELOG.md').text
+    gameVersions = ["1.20.1"] // Must be an array, even with only one version
+    dependencies { // A special DSL for creating dependencies
+        required.project "fabric-api" // Creates a new required dependency on Fabric API
+        embedded.project "midnightlib" // Creates a new required dependency on Fabric API
+    }
+}
+
+task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+    debugMode = true
+
+    description = 'publishes the fabric build to CurseForge.'
+    
+    apiToken = System.getenv("CURSEFORGE_TOKEN")
+    
+    def mainFile = upload(953740, jar)
+    mainFile.changelog = rootProject.file('CHANGELOG.md')
+    mainFile.changelogType = "markdown"
+    mainFile.releaseType = "release"
+    mainFile.addRequirement("fabric-api")
+    mainFile.addEmbedded("midnightlib")
 }

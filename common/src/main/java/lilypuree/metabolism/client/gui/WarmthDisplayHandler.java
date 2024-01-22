@@ -28,7 +28,7 @@ public class WarmthDisplayHandler extends Screen {
     }
     
     // returns the new value of rightHeight
-    public int renderHealth(Minecraft mc, int width, int height, GuiGraphics guiGraphics, int rightHeight) {
+    public int renderWarmth(Minecraft mc, int width, int height, GuiGraphics guiGraphics, int rightHeight) {
         RenderSystem.enableBlend();
 
         Player player = (Player) mc.getCameraEntity();

@@ -1,5 +1,9 @@
 {
-  "metabolism.midnightconfig.title": "Metabolism Client Configs",
+  "metabolism.midnightconfig.title": "Metabolism Configs",
+  "metabolism.midnightconfig.server": "Server",
+  "metabolism.midnightconfig.preciseFeedback": "Enable more precise heat feedback",
+
+  "metabolism.midnightconfig.client": "Client",
   "metabolism.midnightconfig.debug": "Debug Overlay",
   "metabolism.midnightconfig.debugShowOverlay": "Enable the Debug Overlay",
   "metabolism.midnightconfig.debugOverlayAnchor": "Position of the Debug Overlay",
@@ -11,8 +15,10 @@
   "metabolism.midnightconfig.metabolismOverlayOffsetY": "Fine-tune the Y position",
   "metabolism.midnightconfig.metabolismOverlayTextScale": "Scale Text",
   "metabolism.midnightconfig.tooltip": "Metabolite Tooltips",
-  "metabolism.midnightconfig.showToolTip": "Enable metabolite tooltips",
-  "metabolism.midnightconfig.alwaysShowToolTip": "Always show the tooltips",
+  "metabolism.midnightconfig.showToolTip": "Show metabolite data in detailed tooltips",
+  "metabolism.midnightconfig.alwaysShowToolTip": "Always show metabolite tooltips",
+  
+  
   
   
   "effect.metabolism.metabolism": "metabolism",

@@ -4,8 +4,10 @@ import com.mojang.datafixers.util.Either;
 import lilypuree.metabolism.Constants;
 import lilypuree.metabolism.client.gui.DebugOverlay;
 import lilypuree.metabolism.client.gui.MetabolismDisplayHandler;
-import lilypuree.metabolism.client.gui.ToolTipOverlayHandler;
+import lilypuree.metabolism.client.gui.tooltip.ToolTipOverlayHandler;
 import lilypuree.metabolism.client.gui.WarmthDisplayHandler;
+import lilypuree.metabolism.client.gui.tooltip.MetaboliteToolTip;
+import lilypuree.metabolism.client.gui.tooltip.MetaboliteToolTipRenderer;
 import lilypuree.metabolism.config.Config;
 import lilypuree.metabolism.core.Metabolism;
 import net.minecraft.client.Minecraft;
@@ -24,7 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientEventHandler {
     
     public static void onToolTipRegister(RegisterClientTooltipComponentFactoriesEvent event) {
-        event.register(ToolTipOverlayHandler.MetaboliteToolTip.class, ToolTipOverlayHandler.MetaboliteToolTipRenderer::new);
+        event.register(MetaboliteToolTip.class, MetaboliteToolTipRenderer::new);
     }
 
     @SubscribeEvent
@@ -39,7 +41,7 @@ public class ClientEventHandler {
             if (event.getOverlay() == VanillaGuiOverlay.FOOD_LEVEL.type()) {
                 event.setCanceled(true);
                 mc.getProfiler().push("metabolismRenderWarmth");
-                gui.rightHeight = WarmthDisplayHandler.INSTANCE.renderHealth(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), event.getGuiGraphics(), gui.rightHeight);
+                gui.rightHeight = WarmthDisplayHandler.INSTANCE.renderWarmth(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight(), event.getGuiGraphics(), gui.rightHeight);
                 mc.getProfiler().pop();
             } else if (event.getOverlay() == VanillaGuiOverlay.DEBUG_TEXT.type() && Config.CLIENT.metabolismOverlayShow()) {
                 Player player = mc.player;

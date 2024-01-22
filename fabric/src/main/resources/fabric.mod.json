@@ -19,7 +19,13 @@
       "lilypuree.metabolism.MetabolismMod"
     ],
     "client": [
-      "lilypuree.metabolism.ClientInitializer"
+      "lilypuree.metabolism.client.ClientInitializer"
+    ],
+    "rei_client": [
+      "lilypuree.metabolism.client.REITooltipPlugin"
+    ],
+    "appleskin": [
+      "lilypuree.metabolism.client.AppleSkinEventPlugin"
     ]
   },
   "mixins": [
@@ -29,10 +35,15 @@
   "depends": {
     "fabricloader": ">=0.15",
     "fabric": "*",
-    "minecraft": ">=1.20.1",
+    "minecraft": "1.20.1",
     "java": ">=17"
   },
-  "suggests": {
-    "another-mod": "*"
+  "custom": {
+    "mc-publish": {
+      "loaders": ["fabric"]
+    },
+    "dependencies": [
+      "midnightlib@1.4.1(embedded)" 
+    ]
   }
 }

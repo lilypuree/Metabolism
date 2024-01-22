@@ -1,10 +1,12 @@
 package lilypuree.metabolism;
 
+import eu.midnightdust.lib.config.MidnightConfig;
 import lilypuree.metabolism.command.MetabolismCommand;
 import lilypuree.metabolism.core.metabolite.Metabolites;
 import lilypuree.metabolism.data.FabricEnvironments;
 import lilypuree.metabolism.data.FabricMetabolites;
 import lilypuree.metabolism.network.FabricNetwork;
+import lilypuree.metabolism.platform.FabricConfig;
 import lilypuree.metabolism.registration.MetabolismGameRules;
 import lilypuree.metabolism.registration.Registration;
 import net.fabricmc.api.ModInitializer;
@@ -22,21 +24,13 @@ public class MetabolismMod implements ModInitializer {
     @Override
     public void onInitialize() {
         Registration.init();
-        FabricNetwork.init();
         MetabolismGameRules.init();
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             MetabolismCommand.register(dispatcher);
         });
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricMetabolites());
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricEnvironments());
-        UseItemCallback.EVENT.register((player, world, hand) -> {
-            if (!player.isSpectator()) {
-                ItemStack result = CommonCallbacks.onPlayerItemUse(player, player.getItemInHand(hand));
-                if (result != null)
-                    return InteractionResultHolder.success(result);
-            }
-            return InteractionResultHolder.pass(player.getItemInHand(hand));
-        });
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register(Metabolites::syncMetabolites);
+        MidnightConfig.init(Constants.MOD_ID, FabricConfig.class);
     }
 }
