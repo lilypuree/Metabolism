@@ -1,0 +1,11 @@
+{
+  "conditions": [
+    {
+      "condition": "minecraft:location_check",
+      "predicate": {
+        "biome": "minecraft:deep_dark"
+      }
+    }
+  ],
+  "heat_target": -10.0
+}

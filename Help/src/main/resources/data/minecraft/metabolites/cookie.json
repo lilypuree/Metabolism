@@ -1,0 +1,9 @@
+{
+  "warmth": 3.0,
+  "food": 1.0,
+  "hydration": 1.0,
+  "modifier": {
+    "eat_when_full": true,
+    "fast_eating": true
+  }
+}

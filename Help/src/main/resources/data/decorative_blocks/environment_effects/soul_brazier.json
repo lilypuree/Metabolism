@@ -1,0 +1,19 @@
+{
+  "conditions": {
+    "condition": "minecraft:location_check",
+    "predicate": {
+      "block": {
+        "blocks": [
+          "decorative_blocks:soul_brazier"
+        ],
+        "state": {
+          "lit": "true"
+        }
+      }
+    }
+  },
+  "warmth_effect": 1.0,
+  "heat_target": -3.0,
+  "is_resistance": true,
+  "range": 4.0
+}
