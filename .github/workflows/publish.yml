@@ -23,7 +23,7 @@ jobs:
       matrix:
         website: [ modrinth, curseforge ]
         loader: [ forge, fabric ]
-    name: ${{ matrix.website }} (${{ format( 'env.{0}', matrix.loader ) }})
+    name: ${{ matrix.website }} ${{ matrix.loader }}
     
     steps:
       - uses: actions/checkout@v3
