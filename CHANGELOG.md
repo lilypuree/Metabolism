@@ -1,5 +1,10 @@
 ## 1.20.1 Changelog
 
+### 2.1.2
+- Fabric Configs mod menu screen fixed
+- Removed doTemperature gamerule
+- Added server configs to disable heat & conversion of resources
+
 ### 2.1.1
 - Fabric Configs now exist
 - Metabolism HUD shows behind chat

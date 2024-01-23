@@ -6,15 +6,11 @@ import lilypuree.metabolism.compat.AppleSkinEventHandler;
 import lilypuree.metabolism.config.Config;
 import lilypuree.metabolism.core.environment.Environment;
 import lilypuree.metabolism.core.metabolite.Metabolites;
-import lilypuree.metabolism.network.MetabolitesPacket;
 import lilypuree.metabolism.network.Network;
 import lilypuree.metabolism.platform.ForgePlatformHelper;
-import lilypuree.metabolism.registration.MetabolismGameRules;
 import lilypuree.metabolism.registration.Registration;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -30,7 +26,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.NetworkDirection;
 
 @Mod(Constants.MOD_ID)
 public class MetabolismMod {
@@ -72,7 +67,6 @@ public class MetabolismMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        MetabolismGameRules.init();
     }
 
     private void addListener(AddReloadListenerEvent event) {

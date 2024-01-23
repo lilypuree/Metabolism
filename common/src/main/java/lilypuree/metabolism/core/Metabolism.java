@@ -8,7 +8,6 @@ import lilypuree.metabolism.network.ClientSyncMessage;
 import lilypuree.metabolism.network.ProgressSyncMessage;
 import lilypuree.metabolism.network.ResultSyncMessage;
 import lilypuree.metabolism.platform.Services;
-import lilypuree.metabolism.registration.MetabolismGameRules;
 import lilypuree.metabolism.registration.Registration;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -85,10 +84,7 @@ public class Metabolism {
             //apply environmental effects
             ServerLevel level = (ServerLevel) player.level();
             EnvironmentEffect.Combined effect = Environment.get().getCurrentEffect(level, player);
-            if (level.getGameRules().getBoolean(MetabolismGameRules.RULE_DO_TEMPERATURE))
-                applyHeatTarget(effect.getCombinedHeatTarget());
-            else
-                applyHeatTarget(0);
+            applyHeatTarget(Config.SERVER.disableHeat() ? 0 : effect.getCombinedHeatTarget());
             warm(effect.getCombinedWarmthEffect());
             envCounter = 0;
         }
@@ -178,15 +174,19 @@ public class Metabolism {
                 consumeHydration(1.0F);
                 warmIgnoreHeat(1.0F);
                 return MetabolismResult.WARMING;
-            } else if (heat > 0 && food > hydration && food > 1.0F) {
-                consumeFood(1.0F);
-                setHydration(hydration + CONVERSION_RATIO);
-                return MetabolismResult.HYDRATION;
-            } else if (heat < 0 && food < hydration && hydration > 1.0F) {
-                consumeHydration(1.0F);
-                setFood(food + CONVERSION_RATIO);
-                return MetabolismResult.FOOD;
-            } else if (effectLevel > 0 && warmth < maxWarmth && food > 1.0F && hydration > 1.0F) {
+            }
+            if (Config.SERVER.convertResources()) {
+                if (heat > 0 && food > hydration && food > 1.0F) {
+                    consumeFood(1.0F);
+                    setHydration(hydration + CONVERSION_RATIO);
+                    return MetabolismResult.HYDRATION;
+                } else if (heat < 0 && food < hydration && hydration > 1.0F) {
+                    consumeHydration(1.0F);
+                    setFood(food + CONVERSION_RATIO);
+                    return MetabolismResult.FOOD;
+                }
+            }
+            if (effectLevel > 0 && warmth < maxWarmth && food > 1.0F && hydration > 1.0F) {
                 consumeFood(1.0F);
                 consumeHydration(1.0F);
                 warmIgnoreHeat(1.0F);

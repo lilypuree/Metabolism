@@ -5,74 +5,68 @@ import lilypuree.metabolism.platform.services.MetabolismClientConfig;
 import lilypuree.metabolism.platform.services.MetabolismServerConfig;
 import lilypuree.metabolism.util.Anchor;
 
-public class FabricConfig extends MidnightConfig implements MetabolismServerConfig, MetabolismClientConfig {
-
+public class FabricConfig extends MidnightConfig implements MetabolismServerConfig, MetabolismClientConfig { 
+    
     //Server Config
     @Server
-    @Comment(category = "text", centered = true)
-    public static Comment server;
+    @Entry(category = "server")
+    public static boolean preciseFeedback = false;
+    @Server
+    @Entry(category = "server")
+    public static boolean disableHeat = false;
     
     @Server
-    @Entry(category = "numbers")
-    public static boolean preciseFeedback = false;
-
+    @Entry(category = "server")
+    public static boolean convertResources = true;
+    
     @Override
     public boolean preciseFeedback() {
         return preciseFeedback;
     }
+
+    @Override
+    public boolean disableHeat() {
+        return disableHeat;
+    }
+
+    @Override
+    public boolean convertResources() {
+        return convertResources;
+    }
+
+    //Client Config
     
-
-//Client Config
-
     @Client
-    @Comment(category = "text", centered = true)
-    public static Comment client;
-    
-    @Client
-    @Comment(category = "text")
-    public static Comment debug;
-    @Client
-
-    @Entry(category = "text")
+    @Entry(category = "debug")
     public static boolean debugShowOverlay = false;
     @Client
-
-    @Entry(category = "text")
+    @Entry(category = "debug")
     public static Anchor debugOverlayAnchor = Anchor.TOP_RIGHT;
     @Client
-
-    @Entry(category = "numbers")
+    @Entry(category = "debug")
     public static float debugOverlayTextScale = 0.75f;
+ 
     @Client
-
-
-    @Comment(category = "metabolism hud")
-    public static Comment metabolismHud;
-    @Client
-
-    @Entry(category = "text")
+    @Entry(category = "metabolism_hud")
     public static boolean metabolismOverlayShow = true;
     @Client
-    @Entry(category = "text")
+    @Entry(category = "metabolism_hud")
     public static Anchor metabolismOverlayAnchor = Anchor.BOTTOM_LEFT;
     @Client
-    @Entry(category = "numbers")
+    @Entry(category = "metabolism_hud")
     public static int metabolismOverlayOffsetX = 0;
     @Client
-    @Entry(category = "numbers")
+    @Entry(category = "metabolism_hud")
     public static int metabolismOverlayOffsetY = 0;
     @Client
-    @Entry(category = "numbers")
+    @Entry(category = "metabolism_hud")
     public static float metabolismOverlayTextScale = 0.75F;
+    
     @Client
-
-    @Comment(category = "text")
-    public static Comment tooltip;
-    @Client
-    @Entry(category = "text")
+    @Entry(category = "tooltip")
     public static boolean showToolTip = true;
     @Client
-    @Entry(category = "text")
+    @Entry(category = "tooltip")
     public static boolean alwaysShowToolTip = true;
 
 
