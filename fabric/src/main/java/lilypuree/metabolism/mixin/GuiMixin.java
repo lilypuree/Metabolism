@@ -1,5 +1,7 @@
 package lilypuree.metabolism.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import lilypuree.metabolism.client.ClientHandler;
@@ -38,8 +40,8 @@ public abstract class GuiMixin {
     @Shadow
     private int screenHeight;
 
-    @Redirect(method = "renderPlayerHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;getVehicleMaxHearts(Lnet/minecraft/world/entity/LivingEntity;)I"))
-    public int onGetVehicleHealth(Gui gui, LivingEntity entity) {
+    @WrapOperation(method = "renderPlayerHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;getVehicleMaxHearts(Lnet/minecraft/world/entity/LivingEntity;)I"))
+    public int onGetVehicleHealth(Gui instance, LivingEntity vehicle, Operation<Integer> original) {
         return 20;
     }
 

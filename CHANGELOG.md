@@ -1,5 +1,9 @@
 ## 1.20.1 Changelog
 
+### 2.1.3
+- Fabric mixin conflict fixed
+- Added Create metabolites
+
 ### 2.1.2
 - Fabric Configs mod menu screen fixed
 - Removed doTemperature gamerule

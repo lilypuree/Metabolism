@@ -3,8 +3,7 @@ env:
   MOD_NAME: Metabolism
   CURSEFORGE_ID: 953740
   MODRINTH_ID: dd5hwRqg
-  forge: Forge
-  fabric: Fabric
+
 on:
   workflow_dispatch:
 
