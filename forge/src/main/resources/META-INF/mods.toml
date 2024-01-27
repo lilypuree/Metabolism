@@ -29,13 +29,5 @@ description='''${description}'''
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.${mod_id}]]
-    modId="midnightlib"
-    mandatory=true
-    embedded=true
-    versionRange="1.4.1"
-    ordering="NONE"
-    side="BOTH"
-
 [mc-publish]
     loaders = ['forge', 'neoforge']
